@@ -1,7 +1,7 @@
 <script setup>
-import "./Communication.css";
+import "../utils/Communication.css";
 import { useRouter } from "vue-router";
-import { useCommunicationTree } from "./Communication.js";
+import { useCommunicationTree } from "../utils/Communication.js";
 
 const router = useRouter();
 

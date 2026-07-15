@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
-import { EvolutionTree } from "../utils/EvolutionTree.js";
+import { EvolutionTree } from "./EvolutionTree.js";
 
 export function useEvolutionTree() {
   const canvasRef = ref(null);

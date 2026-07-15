@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import 首页 from "../components/首页.vue";
-import 登录 from "../components/登录.vue";
-import user_space from "../components/user_space.vue";
-import Communication from "../components/Communication.vue";
+
+import 首页 from "../views/首页.vue";
+import 登录 from "../views/登录页面.vue";
+import user_space from "../views/user_space.vue";
+import Communication from "../views/Communication.vue";
+import Workplace from "../views/Workplace.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,10 +29,11 @@ const router = createRouter({
       name: "communication",
       component: Communication,
     },
+
     {
-      path: "/about",
-      name: "about",
-      component: () => import("../views/AboutView.vue"),
+      path: "/workplace",
+      name: "workplace",
+      component: Workplace,
     },
   ],
 });

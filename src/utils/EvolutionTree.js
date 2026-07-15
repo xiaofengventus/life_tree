@@ -229,20 +229,6 @@ export class EvolutionTree {
         this.box_select_start = { x: e.clientX, y: e.clientY };
         this.box_select_end = { x: e.clientX, y: e.clientY };
       } else {
-        const now = Date.now();
-        if (
-          this.last_click_time &&
-          now - this.last_click_time < 300 &&
-          this.last_click_node === node
-        ) {
-          this.edit_node_name(node);
-          this.last_click_time = 0;
-          this.last_click_node = null;
-          return;
-        }
-        this.last_click_time = now;
-        this.last_click_node = node;
-
         const additive = e.shiftKey || e.ctrlKey || e.metaKey;
         const preserve_existing =
           !additive &&
@@ -341,8 +327,6 @@ export class EvolutionTree {
   }
 
   handle_wheel(e) {
-    if (!e.ctrlKey && !e.metaKey) return;
-
     e.preventDefault();
     const rect = this.canvas.getBoundingClientRect();
     const mouse_x = e.clientX - rect.left;
@@ -352,7 +336,7 @@ export class EvolutionTree {
     const old_y = (mouse_y - this.pan_offset.y) / this.zoom;
 
     const factor = e.deltaY > 0 ? 0.85 : 1.15;
-    this.zoom = Math.max(0.5, Math.min(2.2, this.zoom * factor));
+    this.zoom = Math.max(0.25, Math.min(4, this.zoom * factor));
 
     this.pan_offset.x = mouse_x - old_x * this.zoom;
     this.pan_offset.y = mouse_y - old_y * this.zoom;
@@ -380,11 +364,20 @@ export class EvolutionTree {
   handle_keydown(e) {
     if (this.mode === "read") return;
 
+    const target = e.target;
+    const isEditing =
+      target.classList?.contains("is-editing") ||
+      target.contentEditable === "true" ||
+      target.closest?.(".is-editing");
+
+    if (isEditing) return;
+
     if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       this.undo();
     }
     if (
+      this.selected_node &&
       (e.key === "Delete" || e.key === "Backspace") &&
       !this.active_name_editor
     ) {
@@ -686,14 +679,14 @@ export class EvolutionTree {
     }
 
     if (classification.type === "chinese") {
-      return [name, ""];
+      return [name];
     }
 
     if (classification.type === "latin") {
-      return ["", name];
+      return [name];
     }
 
-    return [name, ""];
+    return [name];
   }
 
   node_label_text(node) {
@@ -1148,9 +1141,14 @@ export class EvolutionTree {
 
     if (this.should_draw_label(node)) {
       const label_size = this.node_label_size(node);
-      const label_y = current_y - label_size.height - 8;
-      if (!node.is_visible_leaf()) {
-        label_x = true_x + 8;
+      let label_y;
+      if (node.is_visible_leaf()) {
+        label_y = current_y - 16;
+      } else {
+        label_y = current_y - label_size.height - 8;
+        if (!this.align_right) {
+          label_x = true_x + 8;
+        }
       }
       this.draw_node_label(node, label_x, label_y);
     }
@@ -1326,7 +1324,7 @@ export class EvolutionTree {
       label.title =
         this.mode === "read" && node.url
           ? `点击打开：${node.url}`
-          : "单击选中，双击编辑名称";
+          : "单击编辑名称";
 
       if (this.selected_nodes.has(node)) {
         label.classList.add("is-selected");
@@ -1337,14 +1335,18 @@ export class EvolutionTree {
 
       label.style.left = `${x * this.zoom + this.pan_offset.x}px`;
       label.style.top = `${y * this.zoom + this.pan_offset.y}px`;
-      label.style.transform = `scale(${this.zoom})`;
+      label.style.transform = `none`;
       label.style.color = this.selected_nodes.has(node)
         ? "#111827"
         : node.text_color;
       label.style.fontSize = `${this.label_font_size}px`;
-      if (node.label_width) {
-        label.style.width = `${node.label_width}px`;
-      }
+      label.style.background = "transparent";
+      label.style.border = "none";
+      label.style.boxShadow = "none";
+      label.style.padding = "0";
+      label.style.margin = "0";
+      label.style.outline = "none";
+      label.style.width = "auto";
 
       for (let i = 0; i < lines.length; i++) {
         const line = document.createElement("span");
@@ -1359,27 +1361,14 @@ export class EvolutionTree {
         label.appendChild(line);
       }
 
-      label.addEventListener("mousedown", (e) => {
-        e.stopPropagation();
-        if (this.mode !== "read") {
-          const additive = e.shiftKey || e.ctrlKey || e.metaKey;
-          this.select_node(node, false, additive);
-          this.update_dom_label_selection();
-        }
-      });
-
       label.addEventListener("click", (e) => {
         e.stopPropagation();
         if (this.mode === "read") {
           this.open_node_url(node);
-        }
-      });
-
-      label.addEventListener("dblclick", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.mode !== "read") {
-          this.select_node(node, false);
+        } else {
+          const additive = e.shiftKey || e.ctrlKey || e.metaKey;
+          this.select_node(node, false, additive);
+          this.update_dom_label_selection();
           this.start_dom_label_edit(node, label);
         }
       });
@@ -1415,6 +1404,7 @@ export class EvolutionTree {
 
     label.classList.add("is-editing");
     label.contentEditable = "true";
+    label.style.whiteSpace = "pre-wrap";
     label.textContent = node.name || "";
     label.focus();
 
@@ -1450,7 +1440,17 @@ export class EvolutionTree {
 
     label.addEventListener("blur", commit, { once: true });
     label.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        const br = document.createElement("br");
+        range.insertNode(br);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault();
         label.blur();
       } else if (e.key === "Escape") {

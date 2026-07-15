@@ -16,8 +16,20 @@ export const useUserStore = defineStore("user", () => {
   const permissions = {
     UNREGISTERED: ["read"],
     USER: ["read", "create_article", "edit_own_article", "delete_own_article"],
-    ADMIN: ["read", "create_article", "edit_article", "delete_article", "manage_users"],
-    COOPERATOR: ["read", "create_article", "edit_article", "delete_article", "manage_group"],
+    ADMIN: [
+      "read",
+      "create_article",
+      "edit_article",
+      "delete_article",
+      "manage_users",
+    ],
+    COOPERATOR: [
+      "read",
+      "create_article",
+      "edit_article",
+      "delete_article",
+      "manage_group",
+    ],
   };
 
   const isLoggedIn = computed(() => !!token.value && user.value !== null);
@@ -54,8 +66,48 @@ export const useUserStore = defineStore("user", () => {
       return false;
     } catch (error) {
       console.error("Login failed:", error);
-      return false;
     }
+
+    const testAccounts = [
+      {
+        username: "test",
+        password: "test123",
+        user: {
+          name: "内测用户",
+          uid: "UID2024TEST001",
+          level: 10,
+          introduce: "生命时序项目内测用户，拥有完整功能权限",
+          type: userTypes.USER,
+          signup_data: new Date("2024-01-15").toISOString(),
+        },
+      },
+      {
+        username: "admin",
+        password: "admin123",
+        user: {
+          name: "管理员",
+          uid: "UID2024ADMIN001",
+          level: 99,
+          introduce: "项目管理员，拥有全部权限",
+          type: userTypes.ADMIN,
+          signup_data: new Date("2024-01-01").toISOString(),
+        },
+      },
+    ];
+
+    const match = testAccounts.find(
+      (acc) => acc.username === username && acc.password === password,
+    );
+
+    if (match) {
+      token.value = "TEST_TOKEN_" + Date.now();
+      user.value = match.user;
+      localStorage.setItem("token", token.value);
+      localStorage.setItem("user", JSON.stringify(user.value));
+      return true;
+    }
+
+    return false;
   }
 
   async function register(userData) {
@@ -119,7 +171,11 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function generateUid() {
-    return "UID" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase();
+    return (
+      "UID" +
+      Date.now().toString(36).toUpperCase() +
+      Math.random().toString(36).substring(2, 8).toUpperCase()
+    );
   }
 
   function initGuestUser() {
