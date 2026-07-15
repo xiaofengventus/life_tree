@@ -58,7 +58,8 @@ const userStore = useUserStore();
 // 用户卡片显示状态（响应式变量）
 const showUserCard = ref(false);
 // 用户头像图片路径
-const imgUrl = ref("@/assets/pic/200-year-old-fox.png");
+import avatarImg from "@/assets/pic/200-year-old-fox.png";
+const imgUrl = ref(avatarImg);
 
 /**
  * 处理头像点击事件
