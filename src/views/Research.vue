@@ -13,5 +13,5 @@ import user_show from "@/components/user_show.vue";
   <navBar />
 
   <!-- 引入用户卡片 -->
-  <user_show />
+  <user_show :show-write-button="true" />
 </template>

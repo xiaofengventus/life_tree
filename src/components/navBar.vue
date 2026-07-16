@@ -19,7 +19,9 @@
         </button>
       </div>
       <div class="form-row">
-        <button class="btn-secondary" @click="goToWorkplace">工作台</button>
+        <button class="btn-secondary" @click="goToWorkplace">
+          工作区Workplace
+        </button>
       </div>
     </div>
   </nav>

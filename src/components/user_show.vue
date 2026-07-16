@@ -1,5 +1,20 @@
 <template>
   <div class="user-float">
+    <button
+      v-if="showWriteButton"
+      class="write-show"
+      :class="{ unauthorized: !canWritePost }"
+      type="button"
+      :aria-label="canWritePost ? '创建帖子' : '没有创建帖子权限'"
+      :title="canWritePost ? '创建帖子' : '登录并获得发帖权限后可使用'"
+      @click="goToCreatePost"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 20l4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16 4 20Z" />
+        <path d="M14.8 6.2l3 3" />
+        <path d="M4 20l4-1" />
+      </svg>
+    </button>
     <!-- 用户头像，点击显示/隐藏用户卡片 -->
     <img
       :src="imgUrl"
@@ -49,18 +64,34 @@
 
 <script setup>
 // 导入Vue响应式工具
-import { ref } from "vue";
+import { computed, ref } from "vue";
 // 导入Vue路由
 import { useRouter } from "vue-router";
 // 导入用户状态管理store
 import { useUserStore } from "@/stores/user";
 // 导入日期格式化工具函数
 import { formatDate } from "@/utils/date";
+// 导入验证跳转模块
+import { useCheckTrans } from "@/composables/check_trans";
 
 // 创建路由实例
 const router = useRouter();
 // 创建用户状态store实例
 const userStore = useUserStore();
+const props = defineProps({
+  showWriteButton: {
+    type: Boolean,
+    default: false,
+  },
+});
+const {
+  canCreatePost,
+  goToCreatePost: checkGoToCreatePost,
+  goToUserSpace: checkGoToUserSpace,
+} = useCheckTrans();
+
+const showWriteButton = computed(() => props.showWriteButton);
+const canWritePost = computed(() => canCreatePost());
 
 // 用户卡片显示状态（响应式变量）
 const showUserCard = ref(false);
@@ -80,9 +111,15 @@ function handleAvatarClick() {
  * 跳转到用户空间页面
  */
 function goToUserSpace() {
-  router.push("/user_space");
+  checkGoToUserSpace();
   // 跳转后隐藏用户卡片
   showUserCard.value = false;
+}
+
+function goToCreatePost() {
+  if (!canWritePost.value) return;
+
+  checkGoToCreatePost();
 }
 
 /**
@@ -116,6 +153,47 @@ async function goOutLogin() {
 }
 
 /* 用户头像样式 */
+.write-show {
+  position: absolute;
+  right: 76px;
+  bottom: 3px;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #1683d8;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.write-show:hover {
+  background: #0f6db6;
+  transform: translateY(-3px);
+}
+
+.write-show.unauthorized {
+  background: #dc2626;
+}
+
+.write-show.unauthorized:hover {
+  background: #b91c1c;
+}
+
+.write-show svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
 .user-avatar {
   width: 64px;
   height: 64px;

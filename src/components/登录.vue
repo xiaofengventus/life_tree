@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/user";
 
+import footer_page from "@/components/footer_page.vue";
+
 const router = useRouter();
 const userStore = useUserStore();
 
@@ -148,6 +150,7 @@ function toggleMode() {
       </div>
     </div>
   </div>
+  <footer_page />
 </template>
 
 <style scoped>

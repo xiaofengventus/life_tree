@@ -1,7 +1,7 @@
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 
-export function useAppNavigation() {
+export function useCheckTrans() {
   const router = useRouter();
   const userStore = useUserStore();
 
@@ -33,10 +33,32 @@ export function useAppNavigation() {
     }
   }
 
+  function goToUserSpace() {
+    if (userStore.isLoggedIn) {
+      router.push("/user-space");
+    } else {
+      router.push("/login");
+    }
+  }
+
+  function canCreatePost() {
+    return userStore.isLoggedIn && userStore.hasPermission("create_article");
+  }
+
+  function goToCreatePost() {
+    if (!canCreatePost()) return false;
+
+    router.push("/create-post");
+    return true;
+  }
+
   return {
     goToHome,
     goToCommunication,
     goToResearch,
     goToWorkplace,
+    goToUserSpace,
+    canCreatePost,
+    goToCreatePost,
   };
 }

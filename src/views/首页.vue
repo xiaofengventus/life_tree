@@ -22,5 +22,6 @@ import home_main_picture from "../components/home_main_picture.vue";
   <navBar />
   <user_show />
   <home_main_picture />
+  <!-- 页脚继续接在主图后面。页面整体自然上下滚动。 -->
   <footer_page />
 </template>
