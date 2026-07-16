@@ -6,7 +6,8 @@
 <script setup>
 import { ref } from "vue";
 
-const mainPicture = ref("/src/assets/pic/200-year-old-fox.png");
+// const mainPicture = ref("/src/assets/pic/200-year-old-fox.png");
+const mainPicture = ref("/src/assets/pic/jmgmksz-hox.png");
 </script>
 
 <style scoped>

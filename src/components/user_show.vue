@@ -34,7 +34,14 @@
       <!-- 操作按钮 -->
       <div class="card-actions">
         <button class="btn-home" @click="goToUserSpace">进入主页</button>
-        <button class="btn-signup" @click="goToLogin">登录</button>
+        <button
+          v-if="!userStore.isLoggedIn"
+          class="btn-signup"
+          @click="goToLogin"
+        >
+          登录
+        </button>
+        <button v-else class="btn-signout" @click="goOutLogin">退出登录</button>
       </div>
     </div>
   </div>
@@ -85,6 +92,17 @@ function goToLogin() {
   router.push("/login");
   // 跳转后隐藏用户卡片
   showUserCard.value = false;
+}
+
+/**
+ * 退出登录
+ */
+async function goOutLogin() {
+  if (!userStore.isLoggedIn) return;
+
+  await userStore.logout();
+  showUserCard.value = false;
+  router.push("/");
 }
 </script>
 

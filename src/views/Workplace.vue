@@ -1,15 +1,26 @@
+<script setup>
+import NavBar from "@/components/navBar.vue";
+import user_show from "@/components/user_show.vue";
+</script>
+
 <template>
+  <!-- 导航栏 -->
+  <NavBar />
+
+  <!-- 引入用户卡片 -->
+  <user_show />
+
   <!-- 工作台页面 -->
   <div class="workplace">
     <!-- 页面标题 -->
     <h1 class="page-title">工作台</h1>
-    
+
     <!-- 欢迎信息 -->
     <div class="welcome-card">
       <h2>欢迎来到生命时序工作台</h2>
       <p>在这里，您可以管理您的进化树项目和研究数据。</p>
     </div>
-    
+
     <!-- 功能卡片区域 -->
     <div class="feature-grid">
       <!-- 我的项目 -->
@@ -19,7 +30,7 @@
         <p>管理和查看您创建的进化树项目</p>
         <button class="btn-primary">查看项目</button>
       </div>
-      
+
       <!-- 最近文件 -->
       <div class="feature-card">
         <div class="feature-icon">📄</div>
@@ -27,7 +38,7 @@
         <p>快速访问最近编辑的文件</p>
         <button class="btn-secondary">查看历史</button>
       </div>
-      
+
       <!-- 研究工具 -->
       <div class="feature-card">
         <div class="feature-icon">🔬</div>
@@ -35,7 +46,7 @@
         <p>使用专业工具进行数据分析</p>
         <button class="btn-secondary">打开工具</button>
       </div>
-      
+
       <!-- 协作空间 -->
       <div class="feature-card">
         <div class="feature-icon">👥</div>
@@ -44,7 +55,7 @@
         <button class="btn-secondary">进入空间</button>
       </div>
     </div>
-    
+
     <!-- 统计信息 -->
     <div class="stats-section">
       <h3>项目统计</h3>
@@ -69,11 +80,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-// 工作台页面组件
-// 提供项目管理、文件访问、研究工具等功能入口
-</script>
 
 <style scoped>
 /* 页面容器 */
@@ -125,7 +131,9 @@
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .feature-card:hover {

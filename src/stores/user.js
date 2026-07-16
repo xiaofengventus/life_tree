@@ -182,11 +182,12 @@ export const useUserStore = defineStore("user", () => {
     if (!user.value && !token.value) {
       user.value = {
         name: "未注册用户",
-        uid: "GUEST" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        // uid: "GUEST" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        uid: null,
         level: 0,
         introduce: "",
         type: userTypes.UNREGISTERED,
-        signup_data: new Date().toISOString(),
+        signup_data: null,
       };
     }
   }

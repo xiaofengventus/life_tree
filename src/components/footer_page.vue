@@ -1,21 +1,20 @@
 <template>
-  <!-- 下拉式页脚组件 -->
+  <!-- 滚动揭示式页脚组件 -->
   <div class="footer-wrapper">
-    <!-- 下拉按钮 -->
-    <button class="footer-toggle" @click="isExpanded = !isExpanded">
+    <!-- 页脚标题 -->
+    <div ref="footerTitle" class="footer-title">
       <span class="footer-title">生命时序 life_tree</span>
-      <span class="footer-arrow" :class="{ expanded: isExpanded }">▼</span>
-    </button>
-    
-    <!-- 展开内容区域 -->
-    <div class="footer-content" :class="{ expanded: isExpanded }">
+    </div>
+
+    <!-- 滚动到标题后自动显示内容区域 -->
+    <div class="footer-content" :class="{ visible: isContentVisible }">
       <div class="footer-section">
         <!-- 版权信息 -->
         <p>&copy; 2026.7.13- 生命时序 life_tree. 保留所有权利.</p>
         <!-- 联系方式 -->
         <p><a href="mailto:1163919575@qq.com">邮箱反馈</a></p>
       </div>
-      
+
       <div class="footer-section">
         <p>科普组织推荐：</p>
         <ul>
@@ -35,7 +34,7 @@
           </li>
         </ul>
       </div>
-      
+
       <div class="footer-section">
         <p>快速链接：</p>
         <ul>
@@ -50,77 +49,74 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 
-// 控制展开/收起状态
-const isExpanded = ref(false);
+const footerTitle = ref(null);
+const isContentVisible = ref(false);
+let observer;
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return;
+
+      isContentVisible.value = true;
+      observer.disconnect();
+    },
+    { threshold: 0.1 },
+  );
+
+  observer.observe(footerTitle.value);
+});
+
+onBeforeUnmount(() => {
+  observer?.disconnect();
+});
 </script>
 
 <style scoped>
-/* 页脚包装器 */
+/* 页脚包装器，接在主图后参与整页滚动 */
 .footer-wrapper {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #1e293b;
-  color: #94a3b8;
-  z-index: 100;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* 下拉按钮 */
-.footer-toggle {
+  position: relative;
   width: 100%;
-  height: 45px;
   background: #1e293b;
   color: #94a3b8;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.footer-toggle:hover {
-  background: #334155;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 标题 */
 .footer-title {
+  width: 100%;
+  height: 45px;
+  background: #1e293b;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 1px;
 }
 
-/* 箭头 */
-.footer-arrow {
-  font-size: 10px;
-  transition: transform 0.3s ease;
-}
-
-.footer-arrow.expanded {
-  transform: rotate(180deg);
-}
-
-/* 展开内容区域 */
+/* 初始隐藏，滚动到标题后揭示内容 */
 .footer-content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease-out;
   padding: 0 20px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    max-height 0.4s ease-out,
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-.footer-content.expanded {
-  max-height: 300px;
+.footer-content.visible {
+  max-height: 1000px;
+  overflow: visible;
+  opacity: 1;
   padding: 20px;
   border-top: 1px solid #334155;
-}
-
-/* 内容布局 */
-.footer-content.expanded {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

@@ -6,6 +6,7 @@ import user_space from "../views/user_space.vue";
 import Communication from "../views/Communication.vue";
 import Workplace from "../views/Workplace.vue";
 import Research from "../views/Research.vue";
+import { requireAuth } from "@/utils/navigation";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,19 +30,24 @@ const router = createRouter({
       path: "/communication",
       name: "communication",
       component: Communication,
+      meta: { requiresAuth: true },
     },
 
     {
       path: "/workplace",
       name: "workplace",
       component: Workplace,
+      meta: { requiresAuth: true },
     },
     {
       path: "/research",
       name: "research",
       component: Research,
+      meta: { requiresAuth: true },
     },
   ],
 });
+
+router.beforeEach(requireAuth);
 
 export default router;

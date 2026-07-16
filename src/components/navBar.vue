@@ -28,41 +28,28 @@
 <script setup>
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user";
+import { navigateWithAuth, goHome } from "@/utils/navigation";
 
 const router = useRouter();
-const userStore = useUserStore();
 
 const isHome = computed(() => {
   return router.currentRoute.value.path === "/";
 });
 
 function goToHome() {
-  router.push("/");
+  goHome(router);
 }
 
 function goToCommunication() {
-  if (userStore.isLoggedIn) {
-    router.push("/communication");
-  } else {
-    router.push("/login");
-  }
+  navigateWithAuth("/communication", router);
 }
 
 function goToResearch() {
-  if (userStore.isLoggedIn) {
-    router.push("/research");
-  } else {
-    router.push("/login");
-  }
+  navigateWithAuth("/research", router);
 }
 
 function goToWorkplace() {
-  if (userStore.isLoggedIn) {
-    router.push("/workplace");
-  } else {
-    router.push("/login");
-  }
+  navigateWithAuth("/workplace", router);
 }
 </script>
 
