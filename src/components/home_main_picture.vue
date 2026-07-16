@@ -5,9 +5,9 @@
 
 <script setup>
 import { ref } from "vue";
-
-// const mainPicture = ref("/src/assets/pic/200-year-old-fox.png");
-const mainPicture = ref("/src/assets/pic/jmgmksz-hox.png");
+// 使用 import 让 Vite 在构建时处理并生成正确的资源路径（避免生产环境路径问题、大小写敏感等）
+import mainPic from "@/assets/pic/jmgmksz-fox.png";
+const mainPicture = ref(mainPic);
 </script>
 
 <style scoped>
