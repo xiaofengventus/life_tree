@@ -50,11 +50,19 @@ function goToCommunication() {
 }
 
 function goToResearch() {
-  router.push("/research");
+  if (userStore.isLoggedIn) {
+    router.push("/research");
+  } else {
+    router.push("/login");
+  }
 }
 
 function goToWorkplace() {
-  router.push("/workplace");
+  if (userStore.isLoggedIn) {
+    router.push("/workplace");
+  } else {
+    router.push("/login");
+  }
 }
 </script>
 

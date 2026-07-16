@@ -5,6 +5,7 @@ import 登录 from "../views/登录页面.vue";
 import user_space from "../views/user_space.vue";
 import Communication from "../views/Communication.vue";
 import Workplace from "../views/Workplace.vue";
+import Research from "../views/Research.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path: "/workplace",
       name: "workplace",
       component: Workplace,
+    },
+    {
+      path: "/research",
+      name: "research",
+      component: Research,
     },
   ],
 });

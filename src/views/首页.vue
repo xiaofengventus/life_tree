@@ -14,10 +14,13 @@ import navBar from "../components/navBar.vue";
 import user_show from "../components/user_show.vue";
 //引入尾页
 import footer_page from "../components/footer_page.vue";
+//引入首页主图图片组件
+import home_main_picture from "../components/home_main_picture.vue";
 </script>
 
 <template>
   <navBar />
   <user_show />
+  <home_main_picture />
   <footer_page />
 </template>

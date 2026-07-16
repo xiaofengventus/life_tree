@@ -1,5 +1,5 @@
 import { nextTick, onMounted, ref } from "vue";
-import { EvolutionTree } from "../utils/EvolutionTree.js";
+import { EvolutionTree } from "./EvolutionTree.js";
 
 export function useCommunicationTree() {
   const canvasRef = ref(null);
@@ -29,7 +29,8 @@ export function useCommunicationTree() {
       selectedInfo.value = "共创树已加载：点击带链接的标签跳转介绍页";
     } catch (error) {
       console.error(error);
-      errorMessage.value = "共创树文件读取失败，请检查 public/trees/communication-tree.json";
+      errorMessage.value =
+        "共创树文件读取失败，请检查 public/trees/communication-tree.json";
     } finally {
       loading.value = false;
     }
