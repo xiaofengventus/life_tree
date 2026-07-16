@@ -10,27 +10,30 @@ export function useCheckTrans() {
   }
 
   function goToCommunication() {
-    if (userStore.isLoggedIn) {
-      router.push("/communication");
-    } else {
-      router.push("/login");
-    }
+    // if (userStore.isLoggedIn) {
+    //   router.push("/communication");
+    // } else {
+    //   router.push("/login");
+    // }
+    router.push("/communication");
   }
 
   function goToResearch() {
-    if (userStore.isLoggedIn) {
-      router.push("/research");
-    } else {
-      router.push("/login");
-    }
+    // if (userStore.isLoggedIn) {
+    //   router.push("/research");
+    // } else {
+    //   router.push("/login");
+    // }
+    router.push("/research");
   }
 
   function goToWorkplace() {
-    if (userStore.isLoggedIn) {
-      router.push("/workplace");
-    } else {
-      router.push("/login");
-    }
+    // if (userStore.isLoggedIn) {
+    //   router.push("/workplace");
+    // } else {
+    //   router.push("/login");
+    // }
+    router.push("/workplace");
   }
 
   function goToUserSpace() {

@@ -30,7 +30,7 @@
 <script setup>
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { navigateWithAuth, goHome } from "@/utils/navigation";
+// import { navigateWithAuth, goHome } from "@/utils/navigation";
 
 const router = useRouter();
 
@@ -39,19 +39,22 @@ const isHome = computed(() => {
 });
 
 function goToHome() {
-  goHome(router);
+  router.push("/");
 }
 
 function goToCommunication() {
-  navigateWithAuth("/communication", router);
+  // 不再需要登录验证，直接跳转
+  router.push("/communication");
 }
 
 function goToResearch() {
-  navigateWithAuth("/research", router);
+  // 不再需要登录验证，直接跳转
+  router.push("/research");
 }
 
 function goToWorkplace() {
-  navigateWithAuth("/workplace", router);
+  // 不再需要登录验证，直接跳转
+  router.push("/workplace");
 }
 </script>
 

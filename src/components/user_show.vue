@@ -177,11 +177,11 @@ async function goOutLogin() {
 }
 
 .write-show.unauthorized {
-  background: #dc2626;
+  background: #94a3b8;
 }
 
 .write-show.unauthorized:hover {
-  background: #b91c1c;
+  background: #64748b;
 }
 
 .write-show svg {

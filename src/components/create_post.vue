@@ -124,13 +124,15 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, shallowRef } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import "@wangeditor/editor/dist/css/style.css";
+import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { formatDateTime } from "@/utils/date";
 
 const emit = defineEmits(["submit"]);
+const route = useRoute();
 const userStore = useUserStore();
 
 const editorRef = shallowRef();
@@ -144,10 +146,15 @@ const changeNote = ref("");
 const agreementAccepted = ref(false);
 const errorMessage = ref("");
 const viewCount = 0;
-const createdAt = new Date();
+const submittedAt = ref("");
+const editingPost = ref(null);
 
 const creator = computed(() => userStore.user?.name || "未注册用户");
-const submissionTime = formatDateTime(createdAt.toISOString());
+const editId = computed(() => String(route.query.edit || ""));
+const isEditing = computed(() => Boolean(editId.value));
+const submissionTime = computed(() =>
+  submittedAt.value ? formatDateTime(submittedAt.value) : "提交时生成",
+);
 
 const toolbarConfig = {
   toolbarKeys: [
@@ -187,6 +194,30 @@ function handleCreated(editor) {
   editorRef.value = editor;
 }
 
+function loadEditingPost() {
+  if (!editId.value) return;
+
+  try {
+    const posts = JSON.parse(localStorage.getItem("life_tree_posts") || "[]");
+    const post = Array.isArray(posts)
+      ? posts.find((item) => String(item.id) === editId.value)
+      : null;
+
+    if (!post) return;
+
+    editingPost.value = post;
+    title.value = post.title || "";
+    author.value = post.author || "";
+    content.value = post.content || "";
+    tags.value = Array.isArray(post.tags) ? [...post.tags] : [];
+    license.value = post.license || license.value;
+    submittedAt.value = post.submittedAt || "";
+    agreementAccepted.value = true;
+  } catch {
+    editingPost.value = null;
+  }
+}
+
 function addTag() {
   const tag = tagInput.value.trim();
   if (!tag || tags.value.includes(tag)) return;
@@ -217,19 +248,30 @@ function submitPost() {
     return;
   }
 
+  const currentSubmittedAt = new Date().toISOString();
+  submittedAt.value = currentSubmittedAt;
+  const revisionCount = (editingPost.value?.revisionCount || 0) + 1;
+  const generatedNote = `${formatDateTime(currentSubmittedAt)} 第${revisionCount}次${isEditing.value ? "修改" : "提交"}`;
+  const submissionNote = changeNote.value.trim() || generatedNote;
+
   emit("submit", {
+    id: editId.value || null,
     title: title.value.trim(),
     creator: creator.value,
+    creatorUid: editingPost.value?.creatorUid || userStore.user?.uid || null,
     author: author.value.trim() || creator.value,
     content: content.value,
     contentType: "html",
     tags: [...tags.value],
     license: license.value,
     viewCount,
-    submittedAt: createdAt.toISOString(),
-    changeNote: changeNote.value.trim(),
+    submittedAt: currentSubmittedAt,
+    revisionCount,
+    changeNote: submissionNote,
   });
 }
+
+onMounted(loadEditingPost);
 
 onBeforeUnmount(() => {
   editorRef.value?.destroy();
