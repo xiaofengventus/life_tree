@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import 首页 from "../views/首页.vue";
-import 登录 from "../views/登录页面.vue";
+import homeView from "../views/首页.vue";
+import loginView from "../views/登录页面.vue";
 import user_space from "../views/user_space.vue";
 import create_user_post from "../views/create_user_post.vue";
 import view_user_post from "../views/view_user_post.vue";
 import Communication from "../views/Communication.vue";
 import Workplace from "../views/Workplace.vue";
 import Research from "../views/Research.vue";
+import evolution_user_tree from "../views/evolution_user_tree.vue";
 import { requireAuth } from "@/utils/navigation";
 
 const router = createRouter({
@@ -16,13 +17,13 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: 首页,
-      alias: "/首页",
+      component: homeView,
+      alias: "/首页〉",
     },
     {
       path: "/login",
       name: "login",
-      component: 登录,
+      component: loginView,
     },
     {
       path: "/user-space",
@@ -39,26 +40,27 @@ const router = createRouter({
       path: "/view-post/:id",
       name: "view-user-post",
       component: view_user_post,
-      // meta: { requiresAuth: true }, // view 不需要登录
     },
     {
       path: "/communication",
       name: "communication",
       component: Communication,
-      // meta: { requiresAuth: true }, // 不再需要登录
     },
-
     {
       path: "/workplace",
       name: "workplace",
-      component: Workplace,
-      // meta: { requiresAuth: true }, // 不再需要登录
+      component: evolution_user_tree,
     },
     {
       path: "/research",
       name: "research",
       component: Research,
-      // meta: { requiresAuth: true }, // 不再需要登录
+    },
+    {
+      path: "/evolution-user-tree",
+      name: "evolution-user-tree",
+      component: evolution_user_tree,
+      meta: { requiresAuth: true },
     },
   ],
 });

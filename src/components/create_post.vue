@@ -3,6 +3,9 @@
     <div class="create-post-container">
       <h1>创建新帖子</h1>
     </div>
+    <p v-if="isEditing" class="editing-hint">
+      正在修改已有文章，原正文内容已载入，提交后会生成新的修改记录。
+    </p>
 
     <form class="create-post-form" @submit.prevent="submitPost">
       <label for="post-title">标题</label>
@@ -114,6 +117,11 @@
           rows="3"
           placeholder="说明本次提交的内容，类似 git commit 的说明"
         ></textarea>
+
+        <label v-if="isEditing" class="minor-change-option">
+          <input v-model="isMinorChange" type="checkbox" />
+          <span>小型修改（不生成提交记录，提交说明也不能写）</span>
+        </label>
       </div>
 
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -124,7 +132,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import "@wangeditor/editor/dist/css/style.css";
 import { useRoute } from "vue-router";
@@ -147,6 +155,7 @@ const agreementAccepted = ref(false);
 const errorMessage = ref("");
 const viewCount = 0;
 const submittedAt = ref("");
+const isMinorChange = ref(false);
 const editingPost = ref(null);
 
 const creator = computed(() => userStore.user?.name || "未注册用户");
@@ -192,6 +201,9 @@ const canSubmit = computed(
 
 function handleCreated(editor) {
   editorRef.value = editor;
+  if (editingPost.value?.content) {
+    editor.setHtml(editingPost.value.content);
+  }
 }
 
 function loadEditingPost() {
@@ -211,8 +223,14 @@ function loadEditingPost() {
     content.value = post.content || "";
     tags.value = Array.isArray(post.tags) ? [...post.tags] : [];
     license.value = post.license || license.value;
+    changeNote.value = post.changeNote || "";
     submittedAt.value = post.submittedAt || "";
+    isMinorChange.value = false;
     agreementAccepted.value = true;
+
+    if (editorRef.value) {
+      editorRef.value.setHtml(post.content || "");
+    }
   } catch {
     editingPost.value = null;
   }
@@ -249,10 +267,17 @@ function submitPost() {
   }
 
   const currentSubmittedAt = new Date().toISOString();
-  submittedAt.value = currentSubmittedAt;
-  const revisionCount = (editingPost.value?.revisionCount || 0) + 1;
+  const effectiveSubmittedAt = isMinorChange.value
+    ? editingPost.value?.submittedAt || currentSubmittedAt
+    : currentSubmittedAt;
+  submittedAt.value = effectiveSubmittedAt;
+  const revisionCount = isMinorChange.value
+    ? editingPost.value?.revisionCount || 1
+    : (editingPost.value?.revisionCount || 0) + 1;
   const generatedNote = `${formatDateTime(currentSubmittedAt)} 第${revisionCount}次${isEditing.value ? "修改" : "提交"}`;
-  const submissionNote = changeNote.value.trim() || generatedNote;
+  const submissionNote = isMinorChange.value
+    ? changeNote.value.trim()
+    : changeNote.value.trim() || generatedNote;
 
   emit("submit", {
     id: editId.value || null,
@@ -265,13 +290,16 @@ function submitPost() {
     tags: [...tags.value],
     license: license.value,
     viewCount,
-    submittedAt: currentSubmittedAt,
+    submittedAt: effectiveSubmittedAt,
+    updatedAt: currentSubmittedAt,
     revisionCount,
     changeNote: submissionNote,
+    minorChangeNote: isMinorChange.value ? changeNote.value.trim() : "",
+    isMinorChange: isMinorChange.value,
   });
 }
 
-onMounted(loadEditingPost);
+watch(() => route.query.edit, loadEditingPost, { immediate: true });
 
 onBeforeUnmount(() => {
   editorRef.value?.destroy();
@@ -299,6 +327,12 @@ onBeforeUnmount(() => {
   margin: 0;
   color: #1e293b;
   font-size: 2rem;
+}
+
+.editing-hint {
+  width: min(100%, 960px);
+  margin: -8px auto 22px;
+  color: #b91c1c;
 }
 
 .create-post-form {
@@ -433,6 +467,23 @@ onBeforeUnmount(() => {
   margin: 0;
   color: #1e293b;
   font-size: 1.15rem;
+}
+
+.minor-change-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 8px 12px;
+  border: 1px solid aquamarine;
+  border-radius: 6px;
+  color: aquamarine;
+  cursor: pointer;
+}
+
+.minor-change-option input {
+  width: auto;
+  accent-color: aquamarine;
 }
 
 .agreement-row {

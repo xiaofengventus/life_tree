@@ -30,6 +30,19 @@
 
     <article class="post-content" v-html="post.content"></article>
 
+    <section v-if="historyRecords.length" class="submission-history">
+      <h2>提交历史</h2>
+      <ol>
+        <li v-for="record in historyRecords" :key="`${record.submittedAt}-${record.revisionCount}`">
+          <time :datetime="record.submittedAt">
+            {{ formatSubmittedTime(record.submittedAt) }}
+          </time>
+          <strong>第{{ record.revisionCount }}次提交</strong>
+          <span>{{ record.note }}</span>
+        </li>
+      </ol>
+    </section>
+
     <footer class="post-footer">
       <p>{{ post.changeNote || "暂无提交说明" }}</p>
       <span>第{{ post.revisionCount || 1 }}次提交</span>
@@ -53,6 +66,26 @@ const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const post = ref(null);
+
+const historyRecords = computed(() => {
+  if (!post.value) return [];
+
+  if (Array.isArray(post.value.history) && post.value.history.length) {
+    return [...post.value.history].sort(
+      (first, second) =>
+        Date.parse(first.submittedAt || "") -
+        Date.parse(second.submittedAt || ""),
+    );
+  }
+
+  return [
+    {
+      revisionCount: post.value.revisionCount || 1,
+      submittedAt: post.value.submittedAt,
+      note: post.value.changeNote || "提交文章",
+    },
+  ];
+});
 
 const isCreator = computed(() => {
   if (!post.value || !userStore.user) return false;
@@ -118,6 +151,37 @@ watch(() => route.params.id, loadPost, { immediate: true });
 .missing-post p,
 .post-footer {
   color: #64748b;
+}
+
+.submission-history {
+  padding: 22px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.submission-history h2 {
+  margin: 0 0 14px;
+  color: #1e293b;
+  font-size: 1.15rem;
+}
+
+.submission-history ol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-left: 24px;
+  color: #64748b;
+}
+
+.submission-history li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  line-height: 1.6;
+}
+
+.submission-history strong {
+  color: #334155;
 }
 
 .update-button {

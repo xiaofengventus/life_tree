@@ -8,18 +8,36 @@ const router = useRouter();
 const userStore = useUserStore();
 const POSTS_STORAGE_KEY = "life_tree_posts";
 
-function handleSubmit(post) {
-  let posts = [];
+function createHistoryEntry(post) {
+  return {
+    revisionCount: post.revisionCount || 1,
+    submittedAt: post.submittedAt || new Date().toISOString(),
+    title: post.title || "未命名帖子",
+    note: post.changeNote || "提交文章",
+  };
+}
 
+function getHistory(post) {
+  if (Array.isArray(post.history) && post.history.length) {
+    return [...post.history];
+  }
+
+  return [createHistoryEntry(post)];
+}
+
+function readPosts() {
   try {
     const storedPosts = JSON.parse(
       localStorage.getItem(POSTS_STORAGE_KEY) || "[]",
     );
-    posts = Array.isArray(storedPosts) ? storedPosts : [];
+    return Array.isArray(storedPosts) ? storedPosts : [];
   } catch {
-    posts = [];
+    return [];
   }
+}
 
+function handleSubmit(post) {
+  const posts = readPosts();
   const existingIndex = post.id
     ? posts.findIndex((item) => String(item.id) === String(post.id))
     : -1;
@@ -32,19 +50,37 @@ function handleSubmit(post) {
 
     if (!isCreator) return;
 
-    posts[existingIndex] = {
+    const history = getHistory(existingPost);
+    const updatedPost = {
       ...existingPost,
       ...post,
       id: existingPost.id,
       creator: existingPost.creator,
       creatorUid: existingPost.creatorUid,
     };
+
+    if (post.isMinorChange) {
+      posts[existingIndex] = {
+        ...updatedPost,
+        history,
+        submittedAt: existingPost.submittedAt,
+        revisionCount: existingPost.revisionCount || 1,
+        changeNote: existingPost.changeNote,
+      };
+    } else {
+      posts[existingIndex] = {
+        ...updatedPost,
+        history: [...history, createHistoryEntry(post)],
+      };
+    }
   } else {
-    posts.unshift({
+    const postRecord = {
       id: globalThis.crypto?.randomUUID?.() || `${Date.now()}`,
       ...post,
-      submittedAt: post.submittedAt || new Date().toISOString(),
-    });
+    };
+
+    postRecord.history = [createHistoryEntry(postRecord)];
+    posts.unshift(postRecord);
   }
 
   localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));

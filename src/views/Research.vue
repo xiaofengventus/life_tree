@@ -112,7 +112,9 @@ onMounted(loadPosts);
             <time :datetime="post.submittedAt">
               最新提交：{{ getSubmittedTime(post.submittedAt) }}
             </time>
-            <span v-if="post.tags?.length">标签：{{ post.tags.join("、") }}</span>
+            <span v-if="post.tags?.length"
+              >标签：{{ post.tags.join("、") }}</span
+            >
           </div>
         </div>
       </article>
