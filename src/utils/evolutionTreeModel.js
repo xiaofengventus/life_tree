@@ -25,6 +25,8 @@ export function createNode(data = {}) {
     colors: {
       branch: data.colors?.branch || data.branch_color || "#202122",
       text: data.colors?.text || data.text_color || "#202122",
+      triangle:
+        data.colors?.triangle || data.triangle_color || "#64748b",
       clade: data.colors?.clade || data.clade_color || null,
     },
     collapsed: Boolean(data.collapsed ?? data.hide_children),
@@ -36,6 +38,7 @@ export function createNode(data = {}) {
 
 export function estimateNameWidth(name) {
   const normalized = normalizeName(name);
+  if (!normalized.zh && !normalized.latin) return 56;
   const lines = `${normalized.zh}${normalized.latin ? ` ${normalized.latin}` : ""}`.split(
     "\n",
   );
@@ -67,23 +70,24 @@ export function createInitialTree() {
 export function normalizeName(name) {
   if (name && typeof name === "object") {
     return {
-      zh: String(name.zh || "").trim() || "空白",
+      zh: String(name.zh || "").trim(),
       latin: String(name.latin || "").replace(/^[ \t]+/, ""),
     };
   }
 
   const value = String(name || "").trim();
-  if (!value) return { zh: "空白", latin: "" };
+  if (!value) return { zh: "", latin: "" };
 
   const match = value.match(/^(\S+)([\s\S]*)$/);
   return {
-    zh: match?.[1] || "空白",
+    zh: match?.[1] || "",
     latin: String(match?.[2] || "").replace(/^[ \t]+/, ""),
   };
 }
 
 export function nodeNameText(node) {
   const name = normalizeName(node?.name);
+  if (!name.zh) return name.latin;
   if (!name.latin) return name.zh;
   return `${name.zh}${name.latin.startsWith("\n") ? "" : " "}${name.latin}`;
 }

@@ -41,13 +41,10 @@ onMounted(loadOfficialTree);
   <main class="communication-page">
     <section class="communication-tree-card">
       <p v-if="loading" class="tree-status">正在加载官方进化树……</p>
-      <p v-else-if="errorMessage" class="tree-status error">{{ errorMessage }}</p>
-      <evolution_tree_canva
-        v-else
-        :model="tree"
-        :zoom="1"
-        read-only
-      />
+      <p v-else-if="errorMessage" class="tree-status error">
+        {{ errorMessage }}
+      </p>
+      <evolution_tree_canva v-else :model="tree" :zoom="1" read-only />
     </section>
   </main>
 </template>

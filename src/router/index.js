@@ -6,7 +6,7 @@ import user_space from "../views/user_space.vue";
 import create_user_post from "../views/create_user_post.vue";
 import view_user_post from "../views/view_user_post.vue";
 import Communication from "../views/Communication.vue";
-import Workplace from "../views/Workplace.vue";
+
 import Research from "../views/Research.vue";
 import evolution_user_tree from "../views/evolution_user_tree.vue";
 import { requireAuth } from "@/utils/navigation";

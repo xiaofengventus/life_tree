@@ -1,0 +1,6 @@
+{
+  "appId": "com.life_tree.app",
+  "appName": " 生命时序",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

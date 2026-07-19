@@ -20,7 +20,7 @@
       </div>
       <div class="form-row">
         <button class="btn-secondary" @click="goToWorkplace">
-          工作区Workplace
+          绘制UserTree
         </button>
       </div>
     </div>

@@ -62,6 +62,14 @@ function handleRename(payload) {
 function exportPdf() {
   canvasRef.value?.exportPdf();
 }
+
+function exportPng() {
+  canvasRef.value?.exportPng();
+}
+
+function exportSvg() {
+  canvasRef.value?.exportSvg();
+}
 </script>
 
 <template>
@@ -79,6 +87,8 @@ function exportPdf() {
       @clear-selection="clearSelection"
       @zoom="changeZoom"
       @export-pdf="exportPdf"
+      @export-png="exportPng"
+      @export-svg="exportSvg"
       @start-free-block="canvasRef?.startFreeBlock($event)"
     />
 

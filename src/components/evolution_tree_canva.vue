@@ -52,6 +52,23 @@
                 class="free-block-handle"
                 @pointerdown.stop="startFreeBlockResize($event, block)"
               />
+              <text
+                v-if="block.name"
+                :x="
+                  freeBlockValue(block, 'x') +
+                  freeBlockValue(block, 'width') +
+                  8
+                "
+                :y="
+                  freeBlockValue(block, 'y') +
+                  freeBlockValue(block, 'height') / 2
+                "
+                :fill="block.textColor"
+                class="free-block-name"
+                dominant-baseline="middle"
+              >
+                {{ block.name }}
+              </text>
             </g>
             <rect
               v-for="clade in layout.clades"
@@ -138,7 +155,7 @@
             <circle
               :cx="dragState.point.x"
               :cy="dragState.point.y"
-              r="92"
+              r="110"
               class="drag-radius"
             />
             <circle
@@ -170,11 +187,7 @@
             class="free-block-draft"
           />
 
-          <g
-            v-for="item in layout.nodes"
-            :key="item.node.id"
-            class="tree-node"
-          >
+          <g v-for="item in layout.nodes" :key="item.node.id" class="tree-node">
             <circle
               v-if="!readOnly"
               :cx="item.x"
@@ -201,6 +214,7 @@
 
             <foreignObject
               v-if="item.showLabel"
+              :data-node-id="item.node.id"
               :x="item.labelX"
               :y="item.labelY"
               width="500"
@@ -211,10 +225,12 @@
                 v-if="editingId === item.node.id"
                 :data-editor-id="item.node.id"
                 v-model="editDraft"
+                :rows="Math.max(1, editDraft.split('\n').length)"
                 class="node-name-editor"
                 :style="{
                   width: `${editWidth}px`,
-                  minHeight: `${item.labelHeight - 2}px`,
+                  height: `${Math.max(26, editDraft.split('\n').length * 22 + 4)}px`,
+                  minHeight: '26px',
                   color: item.node.colors.text,
                 }"
                 @blur="commitNameEdit(item, $event)"
@@ -277,7 +293,7 @@
 
 <script setup>
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { descendants, nodeNameText, walkTree } from "@/utils/evolutionTreeModel";
+import { descendants, nodeNameText } from "@/utils/evolutionTreeModel";
 
 const props = defineProps({
   model: { type: Object, required: true },
@@ -308,6 +324,7 @@ const editWidth = ref(150);
 const selectionBox = ref(null);
 const freeBlockDraft = ref(null);
 const freeBlockModeColor = ref(null);
+const freeBlockModeName = ref("");
 const freeBlockTransform = ref(null);
 const labelResizeState = ref(null);
 
@@ -339,6 +356,14 @@ function visibleChildren(node) {
   return node.collapsed ? [] : node.children || [];
 }
 
+function walkVisibleTree(node, callback, parent = null) {
+  if (!node) return;
+  callback(node, parent);
+  visibleChildren(node).forEach((child) =>
+    walkVisibleTree(child, callback, node),
+  );
+}
+
 function estimatedLineWidth(line) {
   return [...String(line)].reduce(
     (width, character) =>
@@ -355,7 +380,8 @@ function textLineCount(node) {
       .split("\n")
       .reduce(
         (count, line) =>
-          count + Math.max(1, Math.ceil(estimatedLineWidth(line) / availableWidth)),
+          count +
+          Math.max(1, Math.ceil(estimatedLineWidth(line) / availableWidth)),
         0,
       ),
   );
@@ -381,7 +407,7 @@ function adaptiveBranchLength(child, parent) {
     return props.blankBranchLength;
   }
   const internalLabelSpace = child?.children?.length
-    ? Math.max(70, Number(child.labelWidth || 120) + 18)
+    ? Math.max(60, Number(child.labelWidth || 120) + 10)
     : 60;
   return Math.max(60, Number(child.branchLength || 0), internalLabelSpace);
 }
@@ -392,7 +418,8 @@ function subtreeHorizontalSpan(node) {
   return Math.max(
     130,
     ...children.map(
-      (child) => adaptiveBranchLength(child, node) + subtreeHorizontalSpan(child),
+      (child) =>
+        adaptiveBranchLength(child, node) + subtreeHorizontalSpan(child),
     ),
   );
 }
@@ -412,9 +439,9 @@ function buildLayout(root) {
   const leaves = collectLeaves(root);
   const leafY = new Map();
   const gap = 24;
+  const verticalOffset = 11;
   const contentHeight = leaves.reduce(
-    (sum, leaf, index) =>
-      sum + leafBlockHeight(leaf) + (index ? gap : 0),
+    (sum, leaf, index) => sum + leafBlockHeight(leaf) + (index ? gap : 0),
     0,
   );
   const height = Math.max(680, contentHeight + 160);
@@ -422,7 +449,7 @@ function buildLayout(root) {
 
   leaves.forEach((leaf) => {
     const blockHeight = leafBlockHeight(leaf);
-    leafY.set(leaf.id, cursorY + blockHeight / 2);
+    leafY.set(leaf.id, cursorY + blockHeight / 2 + verticalOffset);
     cursorY += blockHeight + gap;
   });
 
@@ -452,7 +479,7 @@ function buildLayout(root) {
   placeX(root, rootX);
   placeY(root);
 
-  walkTree(root, (node) => {
+  walkVisibleTree(root, (node) => {
     const parent = positions.get(node.id)?.parent;
     if (!parent) return;
     const parentPosition = positions.get(parent.id);
@@ -471,7 +498,7 @@ function buildLayout(root) {
   const nodes = [];
   let maxRight = rightLabelX;
 
-  walkTree(root, (node) => {
+  walkVisibleTree(root, (node) => {
     const position = positions.get(node.id);
     const children = visibleChildren(node);
     const isLeaf = !children.length;
@@ -493,7 +520,7 @@ function buildLayout(root) {
         ? rightLabelX
         : labelAnchorX + 7
       : incomingLabelX;
-    const labelHeight = textHeight(node) + 4;
+    const labelHeight = textHeight(node);
     const labelY = isLeaf
       ? position.y - labelHeight / 2
       : position.y - labelHeight - 3;
@@ -536,7 +563,10 @@ function buildLayout(root) {
   const clades = nodes
     .filter((item) => item.node.colors.clade)
     .map((item) => {
-      const ids = [item.node.id, ...descendants(item.node).map((node) => node.id)];
+      const ids = [
+        item.node.id,
+        ...descendants(item.node).map((node) => node.id),
+      ];
       const bounds = boundsForIds(ids, 12);
       return bounds
         ? {
@@ -560,6 +590,8 @@ function buildLayout(root) {
           y: Number(block.y),
           width: Math.max(12, Number(block.width)),
           height: Math.max(12, Number(block.height)),
+          name: String(block.name || ""),
+          textColor: block.color || "#202122",
           fill: rgba(block.color, block.opacity ?? 0.16),
           stroke: rgba(block.color, 0.7),
         };
@@ -569,12 +601,23 @@ function buildLayout(root) {
         ? {
             id: block.id,
             ...bounds,
+            name: String(block.name || ""),
+            textColor: block.color || "#202122",
             fill: rgba(block.color, block.opacity ?? 0.16),
             stroke: rgba(block.color, 0.55),
           }
         : null;
     })
     .filter(Boolean);
+
+  freeBlocks.forEach((block) => {
+    maxRight = Math.max(
+      maxRight,
+      block.x +
+        block.width +
+        (block.name ? estimatedLineWidth(block.name) + 20 : 0),
+    );
+  });
 
   const triangles = nodes
     .filter((item) => item.node.collapsed && item.node.children?.length)
@@ -583,11 +626,11 @@ function buildLayout(root) {
       const halfHeight = Math.max(28, leafBlockHeight(item.node) / 2);
       return {
         id: item.node.id,
-        points: `${item.x},${item.y - halfHeight} ${endX},${item.y} ${item.x},${
+        points: `${item.x},${item.y} ${endX},${item.y - halfHeight} ${endX},${
           item.y + halfHeight
         }`,
-        fill: rgba(item.node.colors.branch, 0.14),
-        stroke: item.node.colors.branch,
+        fill: rgba(item.node.colors.triangle, 0.22),
+        stroke: item.node.colors.triangle,
       };
     });
 
@@ -650,9 +693,7 @@ function beginNameEdit(item) {
   editDraft.value = nodeNameText(item.node);
   editWidth.value = Math.max(80, item.node.labelWidth || 150);
   nextTick(() => {
-    const editor = document.querySelector(
-      `[data-editor-id="${item.node.id}"]`,
-    );
+    const editor = document.querySelector(`[data-editor-id="${item.node.id}"]`);
     editor?.focus();
     editor?.select();
   });
@@ -711,11 +752,13 @@ function finishCanvasPointer() {
     const rect = rectFromPoints(state.start, state.current);
     freeBlockDraft.value = null;
     freeBlockModeColor.value = null;
+    freeBlockModeName.value = "";
     if (rect.width >= 8 && rect.height >= 8) {
       emit("create-free-block", {
         type: "manual",
         ...rect,
         color: state.color,
+        name: state.name,
         opacity: 0.16,
       });
     }
@@ -764,7 +807,8 @@ function handleCanvasPointerMove(event) {
   const point = scenePoint(event);
   state.current = point;
   state.moved =
-    state.moved || Math.hypot(point.x - state.start.x, point.y - state.start.y) > 4;
+    state.moved ||
+    Math.hypot(point.x - state.start.x, point.y - state.start.y) > 4;
 }
 
 function startCanvasPointer(event) {
@@ -776,6 +820,7 @@ function startCanvasPointer(event) {
       current: point,
       moved: false,
       color: freeBlockModeColor.value,
+      name: freeBlockModeName.value,
     };
   } else {
     selectionBox.value = { start: point, current: point, moved: false };
@@ -784,11 +829,14 @@ function startCanvasPointer(event) {
   window.addEventListener("pointerup", finishCanvasPointer, { once: true });
 }
 
-function startFreeBlock(color) {
+function startFreeBlock(options) {
   if (props.readOnly) return;
   editingId.value = null;
   emit("clear-selection");
-  freeBlockModeColor.value = color || "#36c";
+  freeBlockModeColor.value =
+    typeof options === "object" ? options.color || "#36c" : options || "#36c";
+  freeBlockModeName.value =
+    typeof options === "object" ? String(options.name || "") : "";
 }
 
 function finishFreeBlockTransform() {
@@ -838,7 +886,9 @@ function beginFreeBlockTransform(event, block, mode) {
     height: block.height,
   };
   window.addEventListener("pointermove", handleFreeBlockTransform);
-  window.addEventListener("pointerup", finishFreeBlockTransform, { once: true });
+  window.addEventListener("pointerup", finishFreeBlockTransform, {
+    once: true,
+  });
 }
 
 function startFreeBlockMove(event, block) {
@@ -854,7 +904,10 @@ function handleLabelResize(event) {
   if (!state) return;
   state.width = Math.max(
     56,
-    Math.min(460, state.originWidth + (event.clientX - state.startClientX) / props.zoom),
+    Math.min(
+      460,
+      state.originWidth + (event.clientX - state.startClientX) / props.zoom,
+    ),
   );
 }
 
@@ -863,7 +916,8 @@ function finishLabelResize() {
   labelResizeState.value = null;
   window.removeEventListener("pointermove", handleLabelResize);
   window.removeEventListener("pointerup", finishLabelResize);
-  if (result) emit("resize-label", { id: result.id, width: Math.round(result.width) });
+  if (result)
+    emit("resize-label", { id: result.id, width: Math.round(result.width) });
 }
 
 function startLabelResize(event, item) {
@@ -875,8 +929,6 @@ function startLabelResize(event, item) {
     originWidth: labelRenderedWidth(item),
     width: labelRenderedWidth(item),
   };
-  window.addEventListener("pointermove", handleLabelResize);
-  window.addEventListener("pointerup", finishLabelResize, { once: true });
 }
 
 function sourceIdsFor(nodeId) {
@@ -895,10 +947,23 @@ function isInvalidTarget(targetNode, sourceIds) {
 
 function nearestTarget(point, sourceIds) {
   let nearest = null;
-  let distance = 92;
+  let distance = 110;
+  const distanceToRect = (rect) => {
+    const dx = Math.max(rect.x - point.x, 0, point.x - (rect.x + rect.width));
+    const dy = Math.max(rect.y - point.y, 0, point.y - (rect.y + rect.height));
+    return Math.hypot(dx, dy);
+  };
   for (const item of layout.value.nodes) {
     if (isInvalidTarget(item.node, sourceIds)) continue;
-    const current = Math.hypot(item.x - point.x, item.y - point.y);
+    const current = Math.min(
+      Math.hypot(item.x - point.x, item.y - point.y),
+      distanceToRect({
+        x: item.labelX,
+        y: item.labelY,
+        width: item.labelWidth,
+        height: item.labelHeight,
+      }),
+    );
     if (current < distance) {
       nearest = item;
       distance = current;
@@ -965,9 +1030,8 @@ function finishDrag(event) {
   if (!state.target) return;
   const sourceItem = layout.value.itemMap.get(state.node.id);
   const sameParent =
-    sourceItem?.parent?.id &&
-    sourceItem.parent.id === state.target.parent?.id;
-  const reorder = sameParent && state.point.x <= state.target.x + 24;
+    sourceItem?.parent?.id && sourceItem.parent.id === state.target.parent?.id;
+  const reorder = sameParent && state.point.x < state.target.x - 28;
 
   emit("move", {
     nodeId: state.node.id,
@@ -977,13 +1041,123 @@ function finishDrag(event) {
   });
 }
 
+function createExportSvg() {
+  const svg = svgRef.value.cloneNode(true);
+  svg
+    .querySelectorAll(
+      ".branch-hit, .branch-selected, .node-handle, .label-resize-handle, .selection-box, .drag-overlay, .free-block-handle, .free-block-draft",
+    )
+    .forEach((element) => element.remove());
+
+  const namespace = "http://www.w3.org/2000/svg";
+  svg.setAttribute("xmlns", namespace);
+  svg.setAttribute("width", String(layout.value.width));
+  svg.setAttribute("height", String(layout.value.height));
+  svg.setAttribute(
+    "viewBox",
+    `0 0 ${layout.value.width} ${layout.value.height}`,
+  );
+
+  const style = document.createElementNS(namespace, "style");
+  style.textContent = `
+    .branch-visible { stroke-width: 1; fill: none; }
+    .free-block-name { font-family: "Microsoft YaHei", sans-serif; font-size: 15px; }
+  `;
+  svg.prepend(style);
+
+  svg
+    .querySelectorAll("foreignObject[data-node-id]")
+    .forEach((foreignObject) => {
+      const item = layout.value.itemMap.get(foreignObject.dataset.nodeId);
+      if (!item) {
+        foreignObject.remove();
+        return;
+      }
+
+      const text = document.createElementNS(namespace, "text");
+      text.setAttribute("x", String(item.labelX + 3));
+      text.setAttribute("y", String(item.labelY + 18));
+      text.setAttribute("fill", item.node.colors.text || "#202122");
+      text.setAttribute("font-size", "17");
+      text.setAttribute(
+        "font-family",
+        '"Noto Sans CJK SC", "Microsoft YaHei", sans-serif',
+      );
+
+      const chinese = document.createElementNS(namespace, "tspan");
+      chinese.textContent = item.node.name.zh;
+      text.appendChild(chinese);
+
+      const latinLines = String(item.node.name.latin || "").split("\n");
+      if (latinLines[0]) {
+        const latin = document.createElementNS(namespace, "tspan");
+        latin.setAttribute("dx", "5");
+        latin.setAttribute("font-style", "italic");
+        latin.textContent = latinLines[0];
+        text.appendChild(latin);
+      }
+      latinLines.slice(1).forEach((line) => {
+        const latin = document.createElementNS(namespace, "tspan");
+        latin.setAttribute("x", String(item.labelX + 3));
+        latin.setAttribute("dy", "21");
+        latin.setAttribute("font-style", "italic");
+        latin.textContent = line || " ";
+        text.appendChild(latin);
+      });
+
+      foreignObject.replaceWith(text);
+    });
+  return svg;
+}
+
+function serializeExportSvg() {
+  return new XMLSerializer().serializeToString(createExportSvg());
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function renderExportCanvas() {
+  const sourceWidth = layout.value.width;
+  const sourceHeight = layout.value.height;
+  const renderScale = Math.max(
+    0.5,
+    Math.min(2, 8192 / Math.max(sourceWidth, sourceHeight)),
+  );
+  const source = serializeExportSvg();
+  const sourceUrl = URL.createObjectURL(
+    new Blob([source], { type: "image/svg+xml;charset=utf-8" }),
+  );
+  try {
+    const image = new Image();
+    image.src = sourceUrl;
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = () => reject(new Error("SVG rasterization failed"));
+    });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.ceil(sourceWidth * renderScale);
+    canvas.height = Math.ceil(sourceHeight * renderScale);
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  } finally {
+    URL.revokeObjectURL(sourceUrl);
+  }
+}
+
 async function exportPdf() {
   if (!svgRef.value) return false;
   try {
-    const [{ jsPDF }, { default: html2canvas }] = await Promise.all([
-      import("jspdf"),
-      import("html2canvas"),
-    ]);
+    const { jsPDF } = await import("jspdf");
     const sourceWidth = layout.value.width;
     const sourceHeight = layout.value.height;
     const maxSide = 2000;
@@ -997,61 +1171,17 @@ async function exportPdf() {
       hotfixes: ["px_scaling"],
       compress: true,
     });
-    let exportHost = null;
-    try {
-      const exportSvg = svgRef.value.cloneNode(true);
-      exportSvg
-        .querySelectorAll(
-          ".branch-hit, .branch-selected, .node-handle, .label-resize-handle, .selection-box, .drag-overlay, .free-block-handle, .free-block-draft",
-        )
-        .forEach((element) => element.remove());
-      exportSvg.setAttribute("width", String(sourceWidth));
-      exportSvg.setAttribute("height", String(sourceHeight));
-      exportHost = document.createElement("div");
-      Object.assign(exportHost.style, {
-        position: "fixed",
-        left: "-100000px",
-        top: "0",
-        width: `${sourceWidth}px`,
-        height: `${sourceHeight}px`,
-        background: "#ffffff",
-      });
-      exportHost.appendChild(exportSvg);
-      document.body.appendChild(exportHost);
-      const renderScale = Math.max(
-        0.5,
-        Math.min(2, 8192 / Math.max(sourceWidth, sourceHeight)),
-      );
-      const canvas = await html2canvas(exportSvg, {
-        backgroundColor: "#ffffff",
-        width: sourceWidth,
-        height: sourceHeight,
-        scale: renderScale,
-        useCORS: true,
-        logging: false,
-      });
-      pdf.addImage(
-        canvas.toDataURL("image/png"),
-        "PNG",
-        0,
-        0,
-        pageWidth,
-        pageHeight,
-        undefined,
-        "FAST",
-      );
-    } catch (rasterError) {
-      console.warn("Raster PDF export fallback", rasterError);
-      const { svg2pdf } = await import("svg2pdf.js");
-      await svg2pdf(svgRef.value, pdf, {
-        x: 0,
-        y: 0,
-        width: pageWidth,
-        height: pageHeight,
-      });
-    } finally {
-      exportHost?.remove();
-    }
+    const canvas = await renderExportCanvas();
+    pdf.addImage(
+      canvas.toDataURL("image/png"),
+      "PNG",
+      0,
+      0,
+      pageWidth,
+      pageHeight,
+      undefined,
+      "FAST",
+    );
     pdf.save("evolution-tree.pdf");
     return true;
   } catch (error) {
@@ -1059,6 +1189,33 @@ async function exportPdf() {
     window.alert("PDF 导出失败，请稍后重试。");
     return false;
   }
+}
+
+async function exportPng() {
+  if (!svgRef.value) return false;
+  try {
+    const canvas = await renderExportCanvas();
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/png"),
+    );
+    if (!blob) throw new Error("PNG encoding failed");
+    downloadBlob(blob, "evolution-tree.png");
+    return true;
+  } catch (error) {
+    console.error("PNG export failed", error);
+    window.alert("PNG 导出失败，请检查图片地址后重试。");
+    return false;
+  }
+}
+
+function exportSvg() {
+  if (!svgRef.value) return false;
+  const source = serializeExportSvg();
+  downloadBlob(
+    new Blob([source], { type: "image/svg+xml;charset=utf-8" }),
+    "evolution-tree.svg",
+  );
+  return true;
 }
 
 function centerRoot() {
@@ -1075,7 +1232,7 @@ function centerRoot() {
 watch(() => props.model?.id, centerRoot, { immediate: true });
 onMounted(centerRoot);
 
-defineExpose({ exportPdf, centerRoot, startFreeBlock });
+defineExpose({ exportPdf, exportPng, exportSvg, centerRoot, startFreeBlock });
 </script>
 
 <style scoped>
@@ -1197,7 +1354,7 @@ defineExpose({ exportPdf, centerRoot, startFreeBlock });
 
 .node-name-editor {
   resize: horizontal;
-  overflow: auto;
+  overflow: hidden;
   border-color: #36c;
   background: #ffffff;
   outline: none;
@@ -1245,5 +1402,11 @@ defineExpose({ exportPdf, centerRoot, startFreeBlock });
   stroke-width: 1.5;
   stroke-dasharray: 6 4;
   pointer-events: none;
+}
+.free-block-name {
+  font-family: "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  pointer-events: none;
+  user-select: none;
 }
 </style>

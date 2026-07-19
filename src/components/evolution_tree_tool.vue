@@ -10,6 +10,8 @@
       <button type="button" @click="saveTree">导出 .xur</button>
       <button type="button" @click="openFile">导入 .xur</button>
       <button type="button" @click="emit('export-pdf')">导出 PDF</button>
+      <button type="button" @click="emit('export-png')">导出 PNG</button>
+      <button type="button" @click="emit('export-svg')">导出 SVG</button>
       <input
         ref="fileInput"
         type="file"
@@ -43,45 +45,95 @@
       </span>
     </div>
 
-    <div class="tool-row property-row">
-      <label class="branch-length-control">
-        <span>树枝长度</span>
-        <input
-          v-model.number="branchLengthModel"
-          type="range"
-          min="40"
-          max="500"
-          step="1"
-        />
-        <input
-          v-model.number="branchLengthModel"
-          class="number-input"
-          type="number"
-          min="40"
-          max="500"
-        />
-        <output>{{ branchLengthModel }}</output>
-      </label>
+    <div class="tool-row property-row organized-toolbar">
+      <section class="toolbar-section">
+        <label class="branch-length-control">
+          <span>树枝长度</span>
+          <input
+            v-model.number="branchLengthModel"
+            type="range"
+            min="40"
+            max="500"
+            step="1"
+          />
+          <input
+            v-model.number="branchLengthModel"
+            class="number-input"
+            type="number"
+            min="40"
+            max="500"
+          />
+          <output>{{ branchLengthModel }}</output>
+        </label>
+      </section>
 
-      <label>
-        分支颜色
-        <input v-model="color" type="color" />
-      </label>
-      <button type="button" @click="setBranchColor">当前分支</button>
-      <button type="button" @click="setTextColor">当前名字</button>
-      <button type="button" @click="setDescendantBranchColor">
-        节点及后代分支
-      </button>
-      <button type="button" @click="setDescendantTextColor">
-        节点及后代名字
-      </button>
-      <button type="button" @click="toggleScientificTriangle">
-        科学三角形
-      </button>
-      <button type="button" @click="setCladeColor">单系群色块</button>
-      <button type="button" @click="clearCladeColor">清除单系群色块</button>
-      <button type="button" @click="startFreeBlock">自由色块</button>
-      <button type="button" @click="removeFreeBlocks">清除自由色块</button>
+      <section class="toolbar-section color-picker-section">
+        <span>统一颜色选择</span>
+        <div class="palette-picker">
+          <button
+            type="button"
+            class="palette-trigger"
+            @click="paletteOpen = !paletteOpen"
+          >
+            <span class="current-color" :style="{ background: color }"></span>
+            {{ color.toUpperCase() }}
+          </button>
+          <div v-if="paletteOpen" class="color-palette" @click.stop>
+            <div v-for="group in paletteGroups" :key="group.name">
+              <span class="palette-title">{{ group.name }}</span>
+              <div class="palette-grid">
+                <button
+                  v-for="item in group.colors"
+                  :key="item"
+                  type="button"
+                  class="color-swatch"
+                  :class="{ selected: color === item }"
+                  :style="{ background: item }"
+                  :title="item"
+                  @click="selectColor(item)"
+                ></button>
+              </div>
+            </div>
+            <label class="custom-color">
+              自定义
+              <input v-model="color" type="color" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar-section">
+        <span>树枝颜色</span>
+        <button type="button" @click="setBranchColor">当前节点</button>
+        <button type="button" @click="setDescendantBranchColor">
+          该节点及其后代
+        </button>
+      </section>
+
+      <section class="toolbar-section">
+        <span>文本颜色</span>
+        <button type="button" @click="setTextColor">当前节点</button>
+        <button type="button" @click="setDescendantTextColor">
+          该节点及其后代
+        </button>
+      </section>
+
+      <section class="toolbar-section">
+        <button type="button" @click="toggleScientificTriangle">
+          科学三角形
+        </button>
+        <button type="button" @click="setCladeColor">单系群色块</button>
+        <button type="button" @click="startFreeBlock">自由色块</button>
+      </section>
+
+      <section class="toolbar-section">
+        <label>
+          色块名称
+          <input v-model="freeBlockName" class="text-input" type="text" />
+        </label>
+        <button type="button" @click="clearCladeColor">清除单系群色块</button>
+        <button type="button" @click="removeFreeBlocks">清除自由色块</button>
+      </section>
     </div>
 
     <div class="tool-row property-row">
@@ -118,6 +170,7 @@ import {
   findNode,
   findParent,
   generateNodeId,
+  nodeNameText,
   normalizeName,
   selectedRootNodes,
 } from "@/utils/evolutionTreeModel";
@@ -139,14 +192,52 @@ const emit = defineEmits([
   "clear-selection",
   "zoom",
   "export-pdf",
+  "export-png",
+  "export-svg",
   "start-free-block",
 ]);
 
 const fileInput = ref(null);
-const color = ref("#36c");
+const color = ref("#202122");
+const paletteOpen = ref(false);
+const freeBlockName = ref("空白");
 const undoStack = ref([]);
 const clipboardFallback = ref("");
+const clipboardTreeFallback = ref("");
 let pasteEventVersion = 0;
+
+const paletteGroups = [
+  {
+    name: "主题颜色",
+    colors: [
+      "#ffffff", "#202122", "#72777d", "#0b3954", "#087e8b",
+      "#f26b38", "#14866d", "#0892d0", "#a62f92", "#4f9d32",
+      "#eaecf0", "#54595d", "#a2a9b1", "#3366cc", "#36c",
+      "#d33", "#00af89", "#2a9df4", "#c542c7", "#70b94f",
+      "#c8ccd1", "#3a3f44", "#6b7280", "#1e4e8c", "#155e75",
+      "#b45309", "#047857", "#0369a1", "#86198f", "#3f6212",
+    ],
+  },
+  {
+    name: "标准色",
+    colors: [
+      "#c00000", "#ff0000", "#ffc000", "#ffff00", "#92d050",
+      "#00b050", "#00b0f0", "#0070c0", "#002060", "#7030a0",
+    ],
+  },
+  {
+    name: "渐变填充",
+    colors: [
+      "#8b0000", "#c0392b", "#d4a017", "#9a8f00", "#5b8c2a",
+      "#087f5b", "#087f8c", "#075985", "#1e3a8a", "#581c87",
+    ],
+  },
+];
+
+function selectColor(value) {
+  color.value = value;
+  paletteOpen.value = false;
+}
 
 const selectedNode = computed(() =>
   props.selectedIds.length
@@ -204,7 +295,9 @@ function deleteSelected() {
       if (node === root) return;
       const parent = findParent(root, node.id);
       if (parent) {
-        parent.children = parent.children.filter((child) => child.id !== node.id);
+        parent.children = parent.children.filter(
+          (child) => child.id !== node.id,
+        );
       }
     });
   });
@@ -279,7 +372,9 @@ function setNodeImage(value) {
 
 function toggleScientificTriangle() {
   updateSelectedNodes((node) => {
-    if (node.children.length) node.collapsed = !node.collapsed;
+    if (!node.children.length) return;
+    node.collapsed = !node.collapsed;
+    if (node.collapsed) node.colors.triangle = color.value;
   });
 }
 
@@ -296,7 +391,10 @@ function clearCladeColor() {
 }
 
 function startFreeBlock() {
-  emit("start-free-block", color.value);
+  emit("start-free-block", {
+    color: color.value,
+    name: freeBlockName.value.trim(),
+  });
 }
 
 function createFreeBlock(block) {
@@ -310,6 +408,7 @@ function createFreeBlock(block) {
       width: Math.max(12, Number(block.width) || 12),
       height: Math.max(12, Number(block.height) || 12),
       color: block.color || color.value,
+      name: String(block.name || "空白").trim() || "空白",
       opacity: 0.16,
     });
   });
@@ -317,7 +416,9 @@ function createFreeBlock(block) {
 
 function updateFreeBlock(block) {
   updateTree((root) => {
-    const current = (root.freeBlocks || []).find((item) => item.id === block.id);
+    const current = (root.freeBlocks || []).find(
+      (item) => item.id === block.id,
+    );
     if (!current) return;
     current.type = "manual";
     current.x = Number(block.x) || 0;
@@ -363,7 +464,8 @@ function moveNodes({ nodeId, targetId, mode, before }) {
     if (
       sources.some(
         (source) =>
-          source === target || descendants(source).some((node) => node.id === target.id),
+          source === target ||
+          descendants(source).some((node) => node.id === target.id),
       )
     ) {
       return;
@@ -372,7 +474,9 @@ function moveNodes({ nodeId, targetId, mode, before }) {
     if (mode === "reorder") {
       const targetParent = findParent(root, target.id);
       if (!targetParent) return;
-      const sourceParents = sources.map((source) => findParent(root, source.id));
+      const sourceParents = sources.map((source) =>
+        findParent(root, source.id),
+      );
       if (sourceParents.some((parent) => parent !== targetParent)) return;
 
       const orderedSources = targetParent.children.filter((child) =>
@@ -381,7 +485,9 @@ function moveNodes({ nodeId, targetId, mode, before }) {
       targetParent.children = targetParent.children.filter(
         (child) => !orderedSources.some((source) => source.id === child.id),
       );
-      let index = targetParent.children.findIndex((child) => child.id === target.id);
+      let index = targetParent.children.findIndex(
+        (child) => child.id === target.id,
+      );
       if (!before) index += 1;
       targetParent.children.splice(index, 0, ...orderedSources);
       return;
@@ -390,7 +496,9 @@ function moveNodes({ nodeId, targetId, mode, before }) {
     sources.forEach((source) => {
       const parent = findParent(root, source.id);
       if (parent) {
-        parent.children = parent.children.filter((child) => child.id !== source.id);
+        parent.children = parent.children.filter(
+          (child) => child.id !== source.id,
+        );
       }
     });
     target.children ||= [];
@@ -415,19 +523,49 @@ function moveSibling(direction) {
   });
 }
 
-function serializeSelected() {
-  const nodes = selectedRootNodes(props.modelValue, props.selectedIds);
-  return `LIFE_TREE_NODES\n${JSON.stringify(nodes)}`;
+function indentedNodeText(node, depth = 0) {
+  const name = nodeNameText(node).replace(/\s*\n\s*/g, " ");
+  return [
+    `${"  ".repeat(depth)}${name}`,
+    ...(node.children || []).map((child) => indentedNodeText(child, depth + 1)),
+  ].join("\n");
 }
 
-async function copySelected() {
-  if (!props.selectedIds.length) return;
-  const text = serializeSelected();
+function contentForCopy() {
+  const browserSelection = window.getSelection?.()?.toString() || "";
+  if (browserSelection) return { text: browserSelection, tree: "" };
+  const nodes = selectedRootNodes(props.modelValue, props.selectedIds);
+  return {
+    text: nodes.map((node) => indentedNodeText(node)).join("\n"),
+    tree: nodes.length ? `LIFE_TREE_NODES\n${JSON.stringify(nodes)}` : "",
+  };
+}
+
+function legacyCopyText(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  Object.assign(textarea.style, {
+    position: "fixed",
+    left: "-10000px",
+    top: "0",
+  });
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
+}
+
+async function copySelectedText() {
+  const { text, tree } = contentForCopy();
+  if (!text) return;
   clipboardFallback.value = text;
+  clipboardTreeFallback.value = tree;
   try {
+    if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
     await navigator.clipboard.writeText(text);
   } catch {
-    // Keep the in-memory fallback for browsers without clipboard permission.
+    legacyCopyText(text);
   }
 }
 
@@ -478,7 +616,11 @@ async function pasteNodes() {
   } catch {
     // The native paste event supplies clipboardData when this API is denied.
   }
-  insertPastedText(text);
+  const content =
+    text === clipboardFallback.value && clipboardTreeFallback.value
+      ? clipboardTreeFallback.value
+      : text;
+  insertPastedText(content);
 }
 
 function handlePaste(event) {
@@ -487,64 +629,86 @@ function handlePaste(event) {
   if (!text.trim()) return;
   event.preventDefault();
   pasteEventVersion += 1;
+  const content =
+    text === clipboardFallback.value && clipboardTreeFallback.value
+      ? clipboardTreeFallback.value
+      : text;
+  if (content === text && text !== clipboardFallback.value) {
+    clipboardTreeFallback.value = "";
+  }
   clipboardFallback.value = text;
-  insertPastedText(text);
+  insertPastedText(content);
 }
 
-function bytesToBase64(bytes) {
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return btoa(binary);
+function encodeXur(tree) {
+  return JSON.stringify(tree, null, 2);
 }
 
-function base64ToBytes(value) {
-  const binary = atob(value);
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
-}
+function decodeXur(raw) {
+  const text = String(raw || "").trim();
 
-async function xurKey() {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode("life-tree-xur-format-v2"),
-  );
-  return crypto.subtle.importKey("raw", digest, "AES-GCM", false, [
-    "encrypt",
-    "decrypt",
-  ]);
-}
-
-async function encodeXur(tree) {
-  if (!crypto.subtle) {
-    return `XUR1:${btoa(unescape(encodeURIComponent(JSON.stringify(tree))))}`;
+  if (!text) {
+    throw new Error("empty xur content");
   }
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encrypted = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    await xurKey(),
-    new TextEncoder().encode(JSON.stringify(tree)),
-  );
-  return `XUR2:${bytesToBase64(iv)}:${bytesToBase64(
-    new Uint8Array(encrypted),
-  )}`;
+
+  if (text.startsWith("XUR1:")) {
+    const payload = text.slice(5);
+    try {
+      return JSON.parse(payload);
+    } catch {
+      return JSON.parse(decodeURIComponent(escape(atob(payload))));
+    }
+  }
+
+  return JSON.parse(text);
 }
 
-async function decodeXur(raw) {
-  if (raw.startsWith("XUR2:")) {
-    const [, ivValue, encryptedValue] = raw.split(":");
-    const decrypted = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: base64ToBytes(ivValue) },
-      await xurKey(),
-      base64ToBytes(encryptedValue),
-    );
-    return JSON.parse(new TextDecoder().decode(decrypted));
-  }
-  if (raw.startsWith("XUR1:")) {
-    return JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))));
-  }
-  return JSON.parse(raw);
-}
+// function base64ToBytes(value) {
+//   const binary = atob(value);
+//   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+// }
+
+// async function xurKey() {
+//   const digest = await crypto.subtle.digest(
+//     "SHA-256",
+//     new TextEncoder().encode("life-tree-xur-format-v2"),
+//   );
+//   return crypto.subtle.importKey("raw", digest, "AES-GCM", false, [
+//     "encrypt",
+//     "decrypt",
+//   ]);
+// }
+
+// async function encodeXur(tree) {
+//   if (!crypto.subtle) {
+//     return `XUR1:${btoa(unescape(encodeURIComponent(JSON.stringify(tree))))}`;
+//   }
+//   const iv = crypto.getRandomValues(new Uint8Array(12));
+//   const encrypted = await crypto.subtle.encrypt(
+//     { name: "AES-GCM", iv },
+//     await xurKey(),
+//     new TextEncoder().encode(JSON.stringify(tree)),
+//   );
+//   return `XUR2:${bytesToBase64(iv)}:${bytesToBase64(
+//     new Uint8Array(encrypted),
+//   )}`;
+// }
+
+// async function decodeXur(raw) {
+//   if (raw.startsWith("XUR2:")) {
+//     const [, ivValue, encryptedValue] = raw.split(":");
+//     const decrypted = await crypto.subtle.decrypt(
+//       { name: "AES-GCM", iv: base64ToBytes(ivValue) },
+//       await xurKey(),
+//       base64ToBytes(encryptedValue),
+//     );
+//     return JSON.parse(new TextDecoder().decode(decrypted));
+//   }
+//   if (raw.startsWith("XUR1:")) {
+//     return JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))));
+//   }
+//   return JSON.parse(raw);
+// }
 
 async function saveTree() {
   const content = await encodeXur(props.modelValue);
@@ -603,7 +767,7 @@ function handleShortcut(event) {
     saveTree();
   } else if (modifier && key === "c") {
     event.preventDefault();
-    copySelected();
+    copySelectedText();
   } else if (modifier && key === "v") {
     // Let the native paste event read clipboardData without permission prompts.
     // The fallback below covers environments that do not dispatch paste.
@@ -717,6 +881,90 @@ onBeforeUnmount(() => {
   flex-wrap: nowrap;
   padding-bottom: 2px;
   white-space: nowrap;
+}
+
+.organized-toolbar {
+  align-items: stretch;
+  gap: 0;
+  border-top: 2px solid #36c;
+  border-bottom: 2px solid #36c;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-right: 1px solid #a2a9b1;
+}
+
+.toolbar-section:last-child {
+  border-right: 0;
+}
+
+.color-picker-section {
+  align-items: flex-start;
+}
+
+.palette-picker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.palette-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.current-color {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #72777d;
+}
+
+.color-palette {
+  width: 250px;
+  padding: 7px;
+  border: 1px solid #a2a9b1;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  white-space: normal;
+  z-index: 20;
+}
+
+.palette-title {
+  display: block;
+  margin: 3px 0;
+  padding: 2px 5px;
+  background: #eaecf0;
+  color: #54595d;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 18px);
+  gap: 4px;
+  padding: 3px 5px 6px;
+}
+
+.tool-row button.color-swatch {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid #c8ccd1;
+  border-radius: 0;
+}
+
+.tool-row button.color-swatch.selected {
+  outline: 2px solid #36c;
+  outline-offset: 1px;
+}
+
+.custom-color {
+  margin: 4px 5px 1px;
 }
 
 .branch-length-control input[type="range"] {
