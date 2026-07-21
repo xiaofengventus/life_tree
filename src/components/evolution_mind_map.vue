@@ -2,33 +2,59 @@
   <section class="mind-map-workbench" :class="{ 'is-readonly': readOnly }">
     <header class="command-bar">
       <div v-if="!readOnly" class="command-group file-group">
-        <button type="button" title="新建进化树" @click="newDocument">新建</button>
-        <button type="button" title="打开新版 .xur / .smm 文件" @click="openFile">
+        <button type="button" title="新建进化树" @click="newDocument">
+          新建
+        </button>
+        <button
+          type="button"
+          title="打开新版 .xur / .smm / .xmind 文件"
+          @click="openFile"
+        >
           打开
         </button>
-        <button type="button" class="primary" title="保存新版 .xur" @click="saveXur">
+        <button
+          type="button"
+          class="primary"
+          title="保存新版 .xur"
+          @click="saveXur"
+        >
           保存 .xur
         </button>
         <input
           ref="fileInput"
           type="file"
-          accept=".xur,.smm,.json"
+          accept=".xur,.smm,.json,.xmind"
           hidden
           @change="loadFile"
         />
       </div>
 
       <div v-if="!readOnly" class="command-group">
-        <button type="button" title="撤销 Ctrl+Z" @click="run('BACK')">撤销</button>
-        <button type="button" title="重做 Ctrl+Y" @click="run('FORWARD')">重做</button>
+        <button type="button" title="撤销 Ctrl+Z" @click="run('BACK')">
+          撤销
+        </button>
+        <button type="button" title="重做 Ctrl+Y" @click="run('FORWARD')">
+          重做
+        </button>
         <button type="button" title="添加同级节点 Enter" @click="addSibling">
           同级
         </button>
-        <button type="button" title="添加子节点 Tab" @click="addChild">子节点</button>
-        <button type="button" title="在当前节点上方插入父节点" @click="addParent">
+        <button type="button" title="添加子节点 Tab" @click="addChild">
+          子节点
+        </button>
+        <button
+          type="button"
+          title="在当前节点上方插入父节点"
+          @click="addParent"
+        >
           父节点
         </button>
-        <button type="button" class="danger" title="删除 Delete" @click="removeNodes">
+        <button
+          type="button"
+          class="danger"
+          title="删除 Delete"
+          @click="removeNodes"
+        >
           删除
         </button>
       </div>
@@ -44,34 +70,78 @@
             <option value="catalogOrganization">目录树</option>
           </select>
         </label>
-        <button type="button" title="让整棵树适应当前画布" @click="fitView">适应</button>
-        <button type="button" title="根节点回到画布中央" @click="centerRoot">居中</button>
+        <button type="button" title="让整棵树适应当前画布" @click="fitView">
+          适应
+        </button>
+        <button type="button" title="根节点回到画布中央" @click="centerRoot">
+          居中
+        </button>
         <button type="button" title="缩小" @click="zoomOut">−</button>
-        <button type="button" class="zoom-value" title="恢复 100%" @click="resetZoom">
+        <button
+          type="button"
+          class="zoom-value"
+          title="恢复 100%"
+          @click="resetZoom"
+        >
           {{ zoomPercent }}%
         </button>
         <button type="button" title="放大" @click="zoomIn">＋</button>
         <button type="button" title="展开全部分类群" @click="run('EXPAND_ALL')">
           展开
         </button>
-        <button type="button" title="收起全部分类群" @click="run('UNEXPAND_ALL')">
+        <button
+          type="button"
+          title="收起全部分类群"
+          @click="run('UNEXPAND_ALL')"
+        >
           收起
         </button>
+      </div>
+
+      <div class="command-group evolution-controls">
+        <label class="toggle-control">
+          <input
+            v-model="hideInternalNames"
+            type="checkbox"
+            @change="updateEvolutionPresentation"
+          />
+          隐藏内部节点
+        </label>
+        <label class="toggle-control">
+          <input
+            v-model="alignLeavesRight"
+            type="checkbox"
+            @change="updateEvolutionPresentation"
+          />
+          叶子右对齐（矩形树）
+        </label>
       </div>
 
       <div v-if="!readOnly" class="command-group export-group">
         <button type="button" @click="exportFile('svg')">SVG</button>
         <button type="button" @click="exportFile('png')">PNG</button>
-        <button type="button" title="使用浏览器打印生成可选中文字的矢量 PDF" @click="exportFile('pdf')">
+        <button
+          type="button"
+          title="使用浏览器打印生成可选中文字的矢量 PDF"
+          @click="exportFile('pdf')"
+        >
           矢量 PDF
         </button>
       </div>
     </header>
 
     <div class="workspace-body">
-      <div ref="mapContainer" class="mind-map-canvas" aria-label="生命进化树画布"></div>
+      <div
+        ref="mapContainer"
+        class="mind-map-canvas"
+        aria-label="生命进化树画布"
+      ></div>
 
-      <aside v-if="!readOnly" class="inspector" :class="{ disabled: !selectedCount }">
+      <aside
+        v-if="!readOnly"
+        class="inspector"
+        :class="{ disabled: !selectedCount }"
+      >
         <div class="inspector-heading">
           <div>
             <span class="eyebrow">节点属性</span>
@@ -92,6 +162,16 @@
               @keydown.stop
             ></textarea>
           </label>
+          <div class="name-actions">
+            <button
+              type="button"
+              :disabled="selectedCount !== 1 || hasExtinctMarker"
+              title="在分类群名称前添加灭绝符号 †"
+              @click="addExtinctMarker"
+            >
+              {{ hasExtinctMarker ? "已添加 †" : "添加 †（灭绝标记）" }}
+            </button>
+          </div>
 
           <label class="field full-field">
             <span>资料链接</span>
@@ -120,7 +200,11 @@
           <div class="color-grid">
             <label class="field color-field">
               <span>文字</span>
-              <input v-model="inspector.color" type="color" @change="applyStyle('color')" />
+              <input
+                v-model="inspector.color"
+                type="color"
+                @change="applyStyle('color')"
+              />
             </label>
             <label class="field color-field">
               <span>节点背景</span>
@@ -143,6 +227,7 @@
           <label class="field full-field">
             <span>节点形状</span>
             <select v-model="inspector.shape" @change="applyShape">
+              <option value="line">直线型（全树）</option>
               <option value="roundedRectangle">圆角矩形</option>
               <option value="rectangle">矩形</option>
               <option value="ellipse">椭圆</option>
@@ -170,7 +255,11 @@
       <span>节点 {{ nodeCount }}</span>
       <span v-if="!readOnly">已选 {{ selectedCount }}</span>
       <span class="shortcut-hint">
-        {{ readOnly ? "滚轮平移 · Ctrl+滚轮缩放" : "双击编辑 · Tab 子节点 · Enter 同级 · 拖拽调整结构" }}
+        {{
+          readOnly
+            ? "滚轮平移 · Ctrl+滚轮缩放"
+            : "左键框选 · 右键拖动画布 · Shift/Ctrl 多选 · Tab 子节点 · Enter 同级"
+        }}
       </span>
       <span class="engine-mark">simple-mind-map</span>
     </footer>
@@ -224,22 +313,31 @@ const activeNodes = shallowRef([]);
 const zoomPercent = ref(100);
 const nodeCount = ref(countMindMapNodes(props.modelValue?.root));
 const layoutName = ref(props.modelValue?.layout || "logicalStructure");
+const nodeLineStyle = ref(props.modelValue?.evolution?.nodeLineStyle !== false);
+const hideInternalNames = ref(
+  Boolean(props.modelValue?.evolution?.hideInternalNames),
+);
+const alignLeavesRight = ref(
+  Boolean(props.modelValue?.evolution?.alignLeavesRight),
+);
 const statusText = ref(props.readOnly ? "只读浏览" : "准备就绪");
 const inspector = reactive({
   text: "",
   hyperlink: "",
   image: "",
-  color: "#263a30",
+  color: "#000000",
   fillColor: "#ffffff",
-  lineColor: "#71877a",
+  lineColor: "#000000",
   shape: "roundedRectangle",
 });
 
 let resizeObserver = null;
 let lastPublished = "";
 let viewPublishTimer = null;
+let alignmentGuideGroup = null;
 
 const selectedCount = computed(() => activeNodes.value.length);
+const hasExtinctMarker = computed(() => /^\s*†/.test(inspector.text));
 const selectedTitle = computed(() => {
   if (!selectedCount.value) return "未选择";
   if (selectedCount.value > 1) return `${selectedCount.value} 个节点`;
@@ -257,14 +355,189 @@ function refreshInspector(nodes = activeNodes.value) {
   inspector.text = data.text || "";
   inspector.hyperlink = data.hyperlink || "";
   inspector.image = data.image || "";
-  inspector.color = data.color || "#263a30";
+  inspector.color = data.color || "#000000";
   inspector.fillColor = data.fillColor || "#ffffff";
-  inspector.lineColor = data.lineColor || "#71877a";
-  inspector.shape = data.shape || "roundedRectangle";
+  inspector.lineColor = data.lineColor || "#000000";
+  inspector.shape = nodeLineStyle.value
+    ? "line"
+    : data.shape || "roundedRectangle";
 }
 
 function currentDocument() {
-  return normalizeMindMapDocument(mindMap.value.getData(true));
+  const document = normalizeMindMapDocument(mindMap.value.getData(true));
+  document.evolution = {
+    nodeLineStyle: nodeLineStyle.value,
+    hideInternalNames: hideInternalNames.value,
+    alignLeavesRight: alignLeavesRight.value,
+  };
+  document.theme.config.nodeUseLineStyle = nodeLineStyle.value;
+  return document;
+}
+
+function syncEvolutionOptions(document) {
+  nodeLineStyle.value = document.evolution?.nodeLineStyle !== false;
+  hideInternalNames.value = Boolean(document.evolution?.hideInternalNames);
+  alignLeavesRight.value = Boolean(document.evolution?.alignLeavesRight);
+}
+
+function walkRenderedNodes(node, callback) {
+  if (!node) return;
+  callback(node);
+  (node.children || []).forEach((child) => walkRenderedNodes(child, callback));
+}
+
+function removeReadOnlyTextLink(node) {
+  const linkBinding = node?.__evolutionTextLink;
+  if (linkBinding) {
+    linkBinding.element.removeEventListener("click", linkBinding.open);
+    linkBinding.element.removeEventListener("keydown", linkBinding.onKeydown);
+    delete node.__evolutionTextLink;
+  }
+  node?._textData?.node?.removeClass?.("evolution-readonly-text-link");
+  node?._textData?.node?.attr?.({
+    role: null,
+    tabindex: null,
+    "aria-label": null,
+  });
+}
+
+function getSafeHttpUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function applyReadOnlyTextLink(node) {
+  removeReadOnlyTextLink(node);
+  if (
+    !props.readOnly ||
+    (hideInternalNames.value && node.nodeData?.children?.length)
+  )
+    return;
+
+  const url = getSafeHttpUrl(node.getData?.("hyperlink"));
+  const textNode = node._textData?.node;
+  const element = textNode?.node;
+  if (!url || !element) return;
+
+  const open = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+  const onKeydown = (event) => {
+    if (event.key === "Enter" || event.key === " ") open(event);
+  };
+
+  textNode.addClass("evolution-readonly-text-link");
+  textNode.attr({
+    role: "link",
+    tabindex: 0,
+    "aria-label": `打开链接：${node.getData("text") || url}`,
+  });
+  element.addEventListener("click", open);
+  element.addEventListener("keydown", onKeydown);
+  node.__evolutionTextLink = { element, open, onKeydown };
+}
+
+function restoreEvolutionPresentation(instance = mindMap.value) {
+  alignmentGuideGroup?.remove?.();
+  alignmentGuideGroup = null;
+
+  walkRenderedNodes(instance?.renderer?.root, (node) => {
+    removeReadOnlyTextLink(node);
+    node._textData?.node?.opacity?.(1);
+    if (!Number.isFinite(node.__evolutionOriginalLeft)) return;
+
+    const transform = node.group?.transform?.();
+    if (transform && node.group) {
+      node.group.translate(
+        node.__evolutionOriginalLeft - transform.translateX,
+        node.top - transform.translateY,
+      );
+    }
+    node.left = node.__evolutionOriginalLeft;
+    delete node.__evolutionOriginalLeft;
+  });
+}
+
+function applyEvolutionPresentation(instance = mindMap.value) {
+  const root = instance?.renderer?.root;
+  if (!root) return;
+
+  restoreEvolutionPresentation(instance);
+  const nodes = [];
+  walkRenderedNodes(root, (node) => nodes.push(node));
+
+  nodes.forEach((node) => {
+    node.shapeNode?.fill?.("#ffffff");
+    node.shapeNode?.stroke?.({ color: "#ffffff", width: 0 });
+    (node._lines || []).forEach((line) =>
+      line.stroke({
+        color: "#000000",
+        width: 2,
+        linecap: "butt",
+        linejoin: "miter",
+      }),
+    );
+  });
+
+  if (hideInternalNames.value) {
+    nodes
+      .filter((node) => node.nodeData?.children?.length > 0)
+      .forEach((node) => node._textData?.node?.opacity?.(0));
+  }
+
+  nodes.forEach(applyReadOnlyTextLink);
+
+  if (!alignLeavesRight.value || layoutName.value !== "logicalStructure")
+    return;
+
+  const leaves = nodes.filter(
+    (node) =>
+      node.nodeData?.children?.length === 0 && node.group && !node.isRoot,
+  );
+  if (leaves.length < 2) return;
+
+  const targetLeft =
+    Math.max(...leaves.map((node) => node.left + node.width)) + 72;
+  alignmentGuideGroup = instance.lineDraw
+    .group()
+    .addClass("evolution-alignment-lines");
+  alignmentGuideGroup.attr({ "pointer-events": "none" });
+
+  leaves.forEach((node) => {
+    const originalLeft = node.left;
+    const branchEnd = nodeLineStyle.value
+      ? originalLeft + node.width
+      : originalLeft;
+    const lineY = nodeLineStyle.value
+      ? node.top + node.height
+      : node.top + node.height / 2;
+    const transform = node.group.transform();
+
+    node.__evolutionOriginalLeft = originalLeft;
+    node.group.translate(
+      targetLeft - transform.translateX,
+      node.top - transform.translateY,
+    );
+    node.left = targetLeft;
+
+    if (targetLeft > branchEnd + 8) {
+      alignmentGuideGroup
+        .line(branchEnd + 4, lineY, targetLeft - 4, lineY)
+        .stroke({ color: "#000000", width: 1.25, dasharray: "6 5" })
+        .fill("none");
+    }
+  });
+}
+
+function updateEvolutionPresentation() {
+  applyEvolutionPresentation();
+  publishDocument();
 }
 
 function publishDocument() {
@@ -323,7 +596,16 @@ function toggleExpand() {
 
 function applyText() {
   const node = activeNodes.value[0];
-  if (node && selectedCount.value === 1) node.setText(inspector.text.trim() || "未命名分类群");
+  if (node && selectedCount.value === 1)
+    node.setText(inspector.text.trim() || "未命名分类群");
+}
+
+function addExtinctMarker() {
+  const node = activeNodes.value[0];
+  if (!node || selectedCount.value !== 1 || hasExtinctMarker.value) return;
+  inspector.text = `†${inspector.text.trimStart() || "未命名分类群"}`;
+  node.setText(inspector.text);
+  statusText.value = "已添加灭绝标记 †";
 }
 
 function applyHyperlink() {
@@ -338,17 +620,37 @@ function applyImage() {
   if (!node || selectedCount.value !== 1) return;
   node.setImage(
     inspector.image
-      ? { url: inspector.image.trim(), title: inspector.text, width: 180, height: 110 }
+      ? {
+          url: inspector.image.trim(),
+          title: inspector.text,
+          width: 180,
+          height: 110,
+        }
       : { url: "", title: "", width: 0, height: 0 },
   );
 }
 
 function applyStyle(property) {
-  activeNodes.value.forEach((node) => node.setStyle(property, inspector[property]));
+  activeNodes.value.forEach((node) =>
+    node.setStyle(property, inspector[property]),
+  );
 }
 
 function applyShape() {
-  activeNodes.value.forEach((node) => node.setShape(inspector.shape));
+  if (inspector.shape === "line") {
+    nodeLineStyle.value = true;
+  } else {
+    nodeLineStyle.value = false;
+    activeNodes.value.forEach((node) => node.setShape(inspector.shape));
+  }
+  mindMap.value?.setThemeConfig({
+    ...mindMap.value.getCustomThemeConfig(),
+    nodeUseLineStyle: nodeLineStyle.value,
+  });
+  window.setTimeout(() => {
+    applyEvolutionPresentation();
+    publishDocument();
+  }, 0);
 }
 
 function changeLayout() {
@@ -393,7 +695,9 @@ function saveXur() {
   try {
     const payload = createXurFile(currentDocument());
     downloadBlob(
-      new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }),
+      new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      }),
       `${safeOwner()}.xur`,
     );
     statusText.value = "已保存新版 .xur";
@@ -410,8 +714,17 @@ async function loadFile(event) {
   const file = event.target.files?.[0];
   if (!file) return;
   try {
-    const payload = JSON.parse(await file.text());
-    const document = normalizeMindMapDocument(payload);
+    let document;
+    if (/\.xmind$/i.test(file.name)) {
+      const { parseXmindTextFile } = await import("@/utils/xmindTextImport");
+      const xmindRoot = await parseXmindTextFile(file);
+      document = createInitialMindMapDocument();
+      document.root = xmindRoot;
+    } else {
+      const payload = JSON.parse(await file.text());
+      document = normalizeMindMapDocument(payload);
+    }
+    syncEvolutionOptions(document);
     mindMap.value.setFullData(document);
     layoutName.value = document.layout;
     refreshInspector([]);
@@ -419,17 +732,21 @@ async function loadFile(event) {
       fitView();
       publishDocument();
     }, 0);
-    statusText.value = `已打开 ${file.name}`;
+    statusText.value = /\.xmind$/i.test(file.name)
+      ? `已导入 ${file.name} 的文本结构`
+      : `已打开 ${file.name}`;
   } catch (error) {
-    handleError(error, "文件不是新版 mind-map 文档");
+    handleError(error, "无法解析该 .xur、.smm、JSON 或 XMind 文件");
   } finally {
     event.target.value = "";
   }
 }
 
 function newDocument() {
-  if (!window.confirm("新建会替换当前画布，尚未保存的内容将丢失。继续吗？")) return;
+  if (!window.confirm("新建会替换当前画布，尚未保存的内容将丢失。继续吗？"))
+    return;
   const document = createInitialMindMapDocument();
+  syncEvolutionOptions(document);
   mindMap.value.setFullData(document);
   layoutName.value = document.layout;
   refreshInspector([]);
@@ -467,11 +784,17 @@ async function exportVectorPdf() {
     printWindow.document.body.innerHTML =
       '<p style="font-family:sans-serif;padding:24px">正在生成矢量 PDF…</p>';
 
-    const svgDataUrl = await mindMap.value.doExport.svg(`${safeOwner()}-进化树`);
+    const svgDataUrl = await mindMap.value.doExport.svg(
+      `${safeOwner()}-进化树`,
+    );
     const svgText = await fetch(svgDataUrl).then((response) => response.text());
     const parsed = new DOMParser().parseFromString(svgText, "image/svg+xml");
-    parsed.querySelectorAll("script, foreignObject").forEach((node) => node.remove());
-    const cleanSvg = new XMLSerializer().serializeToString(parsed.documentElement);
+    parsed
+      .querySelectorAll("script, foreignObject")
+      .forEach((node) => node.remove());
+    const cleanSvg = new XMLSerializer().serializeToString(
+      parsed.documentElement,
+    );
 
     printWindow.document.open();
     printWindow.document.write(`<!doctype html>
@@ -528,6 +851,19 @@ function handleError(error, message = "操作失败") {
 }
 
 function bindMindMapEvents(instance, hasSavedView) {
+  instance.on("node_mousedown", (node, event) => {
+    if (props.readOnly || !event.shiftKey || event.which !== 1) return;
+    node.isMultipleChoice = true;
+    if (!node.getData("isActive")) {
+      instance.emit(
+        "before_node_active",
+        node,
+        instance.renderer.activeNodeList,
+      );
+      instance.renderer.addNodeToActiveList(node, true);
+      instance.renderer.emitNodeActiveEvent(node);
+    }
+  });
   instance.on("node_active", (_node, nodes) => refreshInspector(nodes || []));
   instance.on("data_change", (root) => {
     nodeCount.value = countMindMapNodes(root);
@@ -542,7 +878,11 @@ function bindMindMapEvents(instance, hasSavedView) {
   instance.on("layout_change", (layout) => {
     layoutName.value = layout;
   });
+  instance.on("node_tree_render_start", () =>
+    restoreEvolutionPresentation(instance),
+  );
   instance.on("node_tree_render_end", () => {
+    applyEvolutionPresentation(instance);
     if (!hasSavedView) {
       hasSavedView = true;
       instance.view.fit();
@@ -554,6 +894,7 @@ onMounted(async () => {
   await nextTick();
   try {
     const document = normalizeMindMapDocument(props.modelValue);
+    syncEvolutionOptions(document);
     const instance = markRaw(
       new MindMap({
         el: mapContainer.value,
@@ -570,6 +911,7 @@ onMounted(async () => {
         mousewheelAction: "move",
         mousewheelZoomActionReverse: true,
         enableCtrlKeyNodeSelection: true,
+        useLeftKeySelectionRightKeyDrag: !props.readOnly,
         enableShortcutOnlyWhenMouseInSvg: true,
         enableAutoEnterTextEditWhenKeydown: true,
         autoEmptyTextWhenKeydownEnterEdit: false,
@@ -610,6 +952,7 @@ watch(
     }
     try {
       const document = normalizeMindMapDocument(value);
+      syncEvolutionOptions(document);
       mindMap.value.setFullData(document);
       layoutName.value = document.layout;
       nodeCount.value = countMindMapNodes(document.root);
@@ -621,12 +964,19 @@ watch(
 
 onBeforeUnmount(() => {
   window.clearTimeout(viewPublishTimer);
+  restoreEvolutionPresentation();
   resizeObserver?.disconnect();
   mindMap.value?.destroy();
   mindMap.value = null;
 });
 
-defineExpose({ saveXur, exportFile, fitView, centerRoot, getDocument: currentDocument });
+defineExpose({
+  saveXur,
+  exportFile,
+  fitView,
+  centerRoot,
+  getDocument: currentDocument,
+});
 </script>
 
 <style scoped>
@@ -720,6 +1070,26 @@ defineExpose({ saveXur, exportFile, fitView, centerRoot, getDocument: currentDoc
   color: #65746b;
 }
 
+.toggle-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 6px;
+  color: #43584c;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.toggle-control input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--forest-700);
+  cursor: pointer;
+}
+
 .select-control select,
 .field select,
 .field input,
@@ -757,8 +1127,17 @@ defineExpose({ saveXur, exportFile, fitView, centerRoot, getDocument: currentDoc
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background-image: radial-gradient(circle at 1px 1px, rgba(42, 88, 61, 0.11) 1px, transparent 0);
-  background-size: 24px 24px;
+  background: #ffffff;
+}
+
+.mind-map-canvas :deep(.evolution-readonly-text-link),
+.mind-map-canvas :deep(.evolution-readonly-text-link .smm-text-node-wrap) {
+  cursor: pointer;
+}
+
+.mind-map-canvas :deep(.evolution-readonly-text-link .smm-text-node-wrap) {
+  fill: #0969da !important;
+  text-decoration: underline;
 }
 
 .inspector {
@@ -820,6 +1199,34 @@ defineExpose({ saveXur, exportFile, fitView, centerRoot, getDocument: currentDoc
 
 .full-field {
   margin: 14px 16px 0;
+}
+
+.name-actions {
+  display: flex;
+  margin: 8px 16px 0;
+}
+
+.name-actions button {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid #cbd7cf;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #294236;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.name-actions button:hover:not(:disabled) {
+  border-color: var(--forest-700);
+  background: #f1f7f3;
+}
+
+.name-actions button:disabled {
+  color: #8a978f;
+  cursor: default;
+  opacity: 0.72;
 }
 
 .field input,

@@ -10,13 +10,14 @@
         "text": "生命共同祖先\nLast Universal Common Ancestor",
         "expand": true,
         "hyperlink": "https://zh.wikipedia.org/wiki/%E6%9C%80%E5%90%8E%E6%99%AE%E9%81%8D%E5%85%B1%E5%90%8C%E7%A5%96%E5%85%88",
-        "fillColor": "#163d2b",
-        "color": "#ffffff",
-        "borderColor": "#163d2b",
-        "borderWidth": 2,
+        "fillColor": "#ffffff",
+        "color": "#000000",
+        "borderColor": "#ffffff",
+        "borderWidth": 0,
         "fontSize": 20,
         "fontWeight": "bold",
-        "shape": "roundedRectangle"
+        "shape": "roundedRectangle",
+        "lineColor": "#000000"
       },
       "children": [
         {
@@ -25,10 +26,11 @@
             "text": "细菌域 Bacteria",
             "expand": true,
             "hyperlink": "https://zh.wikipedia.org/wiki/%E7%BB%86%E8%8F%8C",
-            "fillColor": "#e8f1ff",
-            "borderColor": "#5b8fd4",
-            "lineColor": "#5b8fd4",
-            "color": "#193a63"
+            "fillColor": "#ffffff",
+            "borderColor": "#ffffff",
+            "lineColor": "#000000",
+            "color": "#000000",
+            "borderWidth": 0
           },
           "children": [
             {
@@ -37,7 +39,11 @@
                 "text": "蓝细菌门 Cyanobacteria",
                 "expand": true,
                 "hyperlink": "https://zh.wikipedia.org/wiki/%E8%97%8D%E8%97%BB%E9%96%80",
-                "lineColor": "#5b8fd4"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": []
             },
@@ -47,7 +53,11 @@
                 "text": "变形菌门 Proteobacteria",
                 "expand": true,
                 "hyperlink": "https://zh.wikipedia.org/wiki/%E8%AE%8A%E5%BD%A2%E8%8F%8C%E9%96%80",
-                "lineColor": "#5b8fd4"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": []
             },
@@ -56,7 +66,11 @@
                 "uid": "official-firmicutes",
                 "text": "厚壁菌门 Bacillota",
                 "expand": true,
-                "lineColor": "#5b8fd4"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": []
             },
@@ -65,7 +79,11 @@
                 "uid": "official-actinomycetota",
                 "text": "放线菌门 Actinomycetota",
                 "expand": true,
-                "lineColor": "#5b8fd4"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": []
             }
@@ -77,10 +95,11 @@
             "text": "古菌域 Archaea",
             "expand": true,
             "hyperlink": "https://zh.wikipedia.org/wiki/%E5%8F%A4%E8%8F%8C",
-            "fillColor": "#f3eaff",
-            "borderColor": "#9670c5",
-            "lineColor": "#9670c5",
-            "color": "#4e2c72"
+            "fillColor": "#ffffff",
+            "borderColor": "#ffffff",
+            "lineColor": "#000000",
+            "color": "#000000",
+            "borderWidth": 0
           },
           "children": [
             {
@@ -88,7 +107,11 @@
                 "uid": "official-euryarchaeota",
                 "text": "广古菌门 Euryarchaeota",
                 "expand": true,
-                "lineColor": "#9670c5"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": [
                 {
@@ -96,7 +119,11 @@
                     "uid": "official-methanogens",
                     "text": "产甲烷菌 Methanogens",
                     "expand": true,
-                    "lineColor": "#9670c5"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 },
@@ -105,7 +132,11 @@
                     "uid": "official-halophiles",
                     "text": "嗜盐古菌 Halophiles",
                     "expand": true,
-                    "lineColor": "#9670c5"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 }
@@ -116,7 +147,11 @@
                 "uid": "official-tack",
                 "text": "TACK 超门 TACK superphylum",
                 "expand": true,
-                "lineColor": "#9670c5"
+                "lineColor": "#000000",
+                "fillColor": "#ffffff",
+                "color": "#000000",
+                "borderColor": "#ffffff",
+                "borderWidth": 0
               },
               "children": []
             }
@@ -128,10 +163,11 @@
             "text": "真核域 Eukaryota",
             "expand": true,
             "hyperlink": "https://zh.wikipedia.org/wiki/%E7%9C%9F%E6%A0%B8%E7%94%9F%E7%89%A9",
-            "fillColor": "#e8f5ec",
-            "borderColor": "#4e9a68",
-            "lineColor": "#4e9a68",
-            "color": "#174a2b"
+            "fillColor": "#ffffff",
+            "borderColor": "#ffffff",
+            "lineColor": "#000000",
+            "color": "#000000",
+            "borderWidth": 0
           },
           "children": [
             {
@@ -140,9 +176,11 @@
                 "text": "动物界 Animalia",
                 "expand": true,
                 "hyperlink": "https://zh.wikipedia.org/wiki/%E5%8A%A8%E7%89%A9",
-                "fillColor": "#fff1e8",
-                "borderColor": "#d98a55",
-                "lineColor": "#d98a55"
+                "fillColor": "#ffffff",
+                "borderColor": "#ffffff",
+                "lineColor": "#000000",
+                "color": "#000000",
+                "borderWidth": 0
               },
               "children": [
                 {
@@ -150,7 +188,11 @@
                     "uid": "official-chordata",
                     "text": "脊索动物门 Chordata",
                     "expand": true,
-                    "lineColor": "#d98a55"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": [
                     {
@@ -158,7 +200,11 @@
                         "uid": "official-mammalia",
                         "text": "哺乳纲 Mammalia",
                         "expand": true,
-                        "lineColor": "#d98a55"
+                        "lineColor": "#000000",
+                        "fillColor": "#ffffff",
+                        "color": "#000000",
+                        "borderColor": "#ffffff",
+                        "borderWidth": 0
                       },
                       "children": []
                     },
@@ -167,7 +213,11 @@
                         "uid": "official-aves",
                         "text": "鸟纲 Aves",
                         "expand": true,
-                        "lineColor": "#d98a55"
+                        "lineColor": "#000000",
+                        "fillColor": "#ffffff",
+                        "color": "#000000",
+                        "borderColor": "#ffffff",
+                        "borderWidth": 0
                       },
                       "children": []
                     }
@@ -178,7 +228,11 @@
                     "uid": "official-arthropoda",
                     "text": "节肢动物门 Arthropoda",
                     "expand": true,
-                    "lineColor": "#d98a55"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 }
@@ -190,9 +244,11 @@
                 "text": "植物界 Plantae",
                 "expand": true,
                 "hyperlink": "https://zh.wikipedia.org/wiki/%E6%A4%8D%E7%89%A9",
-                "fillColor": "#edf7df",
-                "borderColor": "#79a84d",
-                "lineColor": "#79a84d"
+                "fillColor": "#ffffff",
+                "borderColor": "#ffffff",
+                "lineColor": "#000000",
+                "color": "#000000",
+                "borderWidth": 0
               },
               "children": [
                 {
@@ -200,7 +256,11 @@
                     "uid": "official-angiosperms",
                     "text": "被子植物 Angiosperms",
                     "expand": true,
-                    "lineColor": "#79a84d"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 },
@@ -209,7 +269,11 @@
                     "uid": "official-gymnosperms",
                     "text": "裸子植物 Gymnosperms",
                     "expand": true,
-                    "lineColor": "#79a84d"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 }
@@ -221,9 +285,11 @@
                 "text": "真菌界 Fungi",
                 "expand": true,
                 "hyperlink": "https://zh.wikipedia.org/wiki/%E7%9C%9F%E8%8F%8C",
-                "fillColor": "#f7eddf",
-                "borderColor": "#a77b4f",
-                "lineColor": "#a77b4f"
+                "fillColor": "#ffffff",
+                "borderColor": "#ffffff",
+                "lineColor": "#000000",
+                "color": "#000000",
+                "borderWidth": 0
               },
               "children": [
                 {
@@ -231,7 +297,11 @@
                     "uid": "official-ascomycota",
                     "text": "子囊菌门 Ascomycota",
                     "expand": true,
-                    "lineColor": "#a77b4f"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 },
@@ -240,7 +310,11 @@
                     "uid": "official-basidiomycota",
                     "text": "担子菌门 Basidiomycota",
                     "expand": true,
-                    "lineColor": "#a77b4f"
+                    "lineColor": "#000000",
+                    "fillColor": "#ffffff",
+                    "color": "#000000",
+                    "borderColor": "#ffffff",
+                    "borderWidth": 0
                   },
                   "children": []
                 }
@@ -251,9 +325,11 @@
                 "uid": "official-protists",
                 "text": "原生生物类群 Protists",
                 "expand": true,
-                "fillColor": "#e7f5f4",
-                "borderColor": "#4b9a95",
-                "lineColor": "#4b9a95"
+                "fillColor": "#ffffff",
+                "borderColor": "#ffffff",
+                "lineColor": "#000000",
+                "color": "#000000",
+                "borderWidth": 0
               },
               "children": []
             }
@@ -264,12 +340,37 @@
     "theme": {
       "template": "default",
       "config": {
-        "backgroundColor": "#f8faf7",
-        "lineColor": "#71877a",
+        "backgroundColor": "#ffffff",
+        "lineColor": "#000000",
         "lineWidth": 2,
         "lineStyle": "straight",
-        "lineRadius": 8,
-        "hoverRectColor": "#256f4b"
+        "lineRadius": 0,
+        "hoverRectColor": "#256f4b",
+        "nodeUseLineStyle": true,
+        "root": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0
+        },
+        "second": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0
+        },
+        "node": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0
+        }
       }
     },
     "view": null

@@ -11,9 +11,10 @@ const document = ref(createInitialMindMapDocument());
 const loading = ref(true);
 const errorMessage = ref("");
 
+// communication-tree.json
 async function loadOfficialTree() {
   try {
-    const response = await fetch("/trees/communication-tree.json", {
+    const response = await fetch("/trees/LUCA.xur", {
       cache: "no-cache",
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -48,7 +49,12 @@ onMounted(loadOfficialTree);
       <div v-else-if="errorMessage" class="tree-status error">
         {{ errorMessage }}
       </div>
-      <evolution_mind_map v-else v-model="document" read-only file-owner="生命时序官方树" />
+      <evolution_mind_map
+        v-else
+        v-model="document"
+        read-only
+        file-owner="生命时序官方树"
+      />
     </section>
   </main>
 </template>
@@ -58,7 +64,11 @@ onMounted(loadOfficialTree);
   min-height: 100vh;
   padding: 84px 22px 24px;
   background:
-    radial-gradient(circle at 15% 10%, rgba(116, 162, 129, 0.16), transparent 30%),
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(116, 162, 129, 0.16),
+      transparent 30%
+    ),
     #f3f7f3;
 }
 

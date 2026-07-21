@@ -41,11 +41,16 @@ export function createMindMapNode(text = "新分类群", children = [], data = {
 export function createInitialMindMapDocument() {
   return {
     layout: "logicalStructure",
+    evolution: {
+      nodeLineStyle: true,
+      hideInternalNames: false,
+      alignLeavesRight: false,
+    },
     root: createMindMapNode("生命共同祖先", [], {
-      fillColor: "#163d2b",
-      color: "#ffffff",
-      borderColor: "#163d2b",
-      borderWidth: 2,
+      fillColor: "#ffffff",
+      color: "#000000",
+      borderColor: "#ffffff",
+      borderWidth: 0,
       fontSize: 20,
       fontWeight: "bold",
       shape: "roundedRectangle",
@@ -60,19 +65,20 @@ export function createInitialMindMapDocument() {
 
 export function createEvolutionTheme() {
   return {
-    backgroundColor: "#f8faf7",
-    lineColor: "#71877a",
+    backgroundColor: "#ffffff",
+    lineColor: "#000000",
     lineWidth: 2,
     lineStyle: "straight",
-    lineRadius: 8,
-    hoverRectColor: "#256f4b",
+    lineRadius: 0,
+    nodeUseLineStyle: true,
+    hoverRectColor: "#4b5563",
     root: {
-      shape: "roundedRectangle",
-      fillColor: "#163d2b",
-      color: "#ffffff",
-      borderColor: "#163d2b",
-      borderWidth: 2,
-      borderRadius: 10,
+      shape: "rectangle",
+      fillColor: "#ffffff",
+      color: "#000000",
+      borderColor: "#ffffff",
+      borderWidth: 0,
+      borderRadius: 0,
       fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif',
       fontSize: 20,
       fontWeight: "bold",
@@ -82,12 +88,12 @@ export function createEvolutionTheme() {
       paddingY: 10,
     },
     second: {
-      shape: "roundedRectangle",
-      fillColor: "#e6f0e9",
-      color: "#183b2b",
-      borderColor: "#79a88b",
-      borderWidth: 1,
-      borderRadius: 8,
+      shape: "rectangle",
+      fillColor: "#ffffff",
+      color: "#000000",
+      borderColor: "#ffffff",
+      borderWidth: 0,
+      borderRadius: 0,
       fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif',
       fontSize: 17,
       fontWeight: "bold",
@@ -97,12 +103,12 @@ export function createEvolutionTheme() {
       paddingY: 7,
     },
     node: {
-      shape: "roundedRectangle",
+      shape: "rectangle",
       fillColor: "#ffffff",
-      color: "#263a30",
-      borderColor: "#c6d5cb",
-      borderWidth: 1,
-      borderRadius: 7,
+      color: "#000000",
+      borderColor: "#ffffff",
+      borderWidth: 0,
+      borderRadius: 0,
       fontFamily: '"Noto Sans SC", "Microsoft YaHei", sans-serif',
       fontSize: 15,
       marginX: 62,
@@ -139,13 +145,55 @@ export function normalizeMindMapDocument(value) {
   document.layout = SUPPORTED_LAYOUTS.has(document.layout)
     ? document.layout
     : "logicalStructure";
+  const defaultTheme = createEvolutionTheme();
+  const savedTheme = document.theme?.config || {};
   document.theme = {
     template: document.theme?.template || "default",
     config: {
-      ...createEvolutionTheme(),
-      ...document.theme?.config,
+      ...defaultTheme,
+      ...savedTheme,
+      backgroundColor: "#ffffff",
+      lineColor: "#000000",
+      lineStyle: "straight",
+      lineRadius: 0,
+      root: {
+        ...defaultTheme.root,
+        ...savedTheme.root,
+        shape: "rectangle",
+        fillColor: "#ffffff",
+        color: "#000000",
+        borderColor: "#ffffff",
+        borderWidth: 0,
+        borderRadius: 0,
+      },
+      second: {
+        ...defaultTheme.second,
+        ...savedTheme.second,
+        shape: "rectangle",
+        fillColor: "#ffffff",
+        color: "#000000",
+        borderColor: "#ffffff",
+        borderWidth: 0,
+        borderRadius: 0,
+      },
+      node: {
+        ...defaultTheme.node,
+        ...savedTheme.node,
+        shape: "rectangle",
+        fillColor: "#ffffff",
+        color: "#000000",
+        borderColor: "#ffffff",
+        borderWidth: 0,
+        borderRadius: 0,
+      },
     },
   };
+  document.evolution = {
+    nodeLineStyle: document.evolution?.nodeLineStyle !== false,
+    hideInternalNames: Boolean(document.evolution?.hideInternalNames),
+    alignLeavesRight: Boolean(document.evolution?.alignLeavesRight),
+  };
+  document.theme.config.nodeUseLineStyle = document.evolution.nodeLineStyle;
   document.view ||= null;
   return document;
 }
@@ -162,8 +210,11 @@ export function createXurFile(document) {
 
 export function countMindMapNodes(root) {
   if (!root) return 0;
-  return 1 + (root.children || []).reduce(
-    (sum, child) => sum + countMindMapNodes(child),
-    0,
+  return (
+    1 +
+    (root.children || []).reduce(
+      (sum, child) => sum + countMindMapNodes(child),
+      0,
+    )
   );
 }
