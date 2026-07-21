@@ -851,6 +851,7 @@ function handleError(error, message = "操作失败") {
 }
 
 function bindMindMapEvents(instance, hasSavedView) {
+  let needsInitialFit = props.readOnly || !hasSavedView;
   instance.on("node_mousedown", (node, event) => {
     if (props.readOnly || !event.shiftKey || event.which !== 1) return;
     node.isMultipleChoice = true;
@@ -883,11 +884,27 @@ function bindMindMapEvents(instance, hasSavedView) {
   );
   instance.on("node_tree_render_end", () => {
     applyEvolutionPresentation(instance);
-    if (!hasSavedView) {
-      hasSavedView = true;
+    if (needsInitialFit) {
+      needsInitialFit = false;
       instance.view.fit();
     }
   });
+}
+
+async function stabilizeReadOnlyLayout(instance) {
+  if (!props.readOnly) return;
+  try {
+    await window.document.fonts?.ready;
+  } catch {
+    // 字体 API 不可用时仍执行下一帧的重新布局。
+  }
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  if (mindMap.value !== instance) return;
+  instance.reRender(() => {
+    window.setTimeout(() => {
+      if (mindMap.value === instance) instance.view.fit();
+    }, 0);
+  }, "readonly-layout-stabilized");
 }
 
 onMounted(async () => {
@@ -902,7 +919,7 @@ onMounted(async () => {
         layout: document.layout,
         theme: document.theme.template,
         themeConfig: document.theme.config,
-        viewData: document.view || undefined,
+        viewData: props.readOnly ? undefined : document.view || undefined,
         readonly: props.readOnly,
         fit: false,
         scaleRatio: 0.12,
@@ -929,6 +946,7 @@ onMounted(async () => {
     bindMindMapEvents(instance, Boolean(document.view));
     resizeObserver = new ResizeObserver(() => instance.resize());
     resizeObserver.observe(mapContainer.value);
+    void stabilizeReadOnlyLayout(instance);
     emit("ready", instance);
     statusText.value = props.readOnly ? "只读浏览" : "准备就绪";
   } catch (error) {

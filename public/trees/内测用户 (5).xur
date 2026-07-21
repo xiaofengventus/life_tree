@@ -1,0 +1,458 @@
+{
+  "format": "life-tree.xur",
+  "version": 3,
+  "engine": "simple-mind-map",
+  "exportedAt": "2026-07-21T09:51:32.867Z",
+  "document": {
+    "layout": "logicalStructure",
+    "root": {
+      "data": {
+        "text": "中心主题",
+        "expand": true,
+        "uid": "7ba5de9a-1e17-46ba-93ce-7d4937766b45",
+        "isActive": false
+      },
+      "children": [
+        {
+          "data": {
+            "text": "甲壳动物冠群Crown-group Pancrustacea",
+            "expand": true,
+            "uid": "df3babee-1279-46ef-8754-e169d9092ff7",
+            "isActive": false
+          },
+          "children": [
+            {
+              "data": {
+                "text": "寡甲总纲Oligostraca",
+                "expand": true,
+                "uid": "06e3c9d9-722e-42b2-8d62-74ed5848ff7d",
+                "isActive": false
+              },
+              "children": [
+                {
+                  "data": {
+                    "text": "介形纲Ostracoda",
+                    "expand": true,
+                    "uid": "9f21cfc7-7ca4-4414-abab-854015a7934a",
+                    "isActive": false
+                  },
+                  "children": [
+                    {
+                      "data": {
+                        "text": "须虾纲Mystacocarida",
+                        "expand": true,
+                        "uid": "8278dc1a-c627-4456-90a9-184387b7d8a3",
+                        "isActive": false
+                      },
+                      "children": [
+                        {
+                          "data": {
+                            "text": "须虾目Mystacocaridida",
+                            "expand": true,
+                            "uid": "68aba744-e5a0-48ce-ab5f-8b69e9c7330c",
+                            "isActive": false
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "text": "壮肢纲Myodocopa",
+                        "expand": true,
+                        "uid": "d0643f71-0027-4d44-85a9-5f5e8f3891f8",
+                        "isActive": false
+                      },
+                      "children": [
+                        {
+                          "data": {
+                            "text": "古足介目Palaeocopida",
+                            "expand": true,
+                            "uid": "38d3ac95-583f-44e4-b50d-b7c6aabf2851",
+                            "isActive": false
+                          },
+                          "children": []
+                        },
+                        {
+                          "data": {
+                            "text": "",
+                            "expand": true,
+                            "uid": "6d585f03-5385-415c-a57d-183bd7f899ef",
+                            "isActive": false
+                          },
+                          "children": [
+                            {
+                              "data": {
+                                "text": "海介目Halocyprida",
+                                "expand": true,
+                                "uid": "a175e892-415e-4dce-a308-d72502a8b75c",
+                                "isActive": false
+                              },
+                              "children": []
+                            },
+                            {
+                              "data": {
+                                "text": "",
+                                "expand": true,
+                                "uid": "90afe5bf-36cc-4c08-baa1-47b472878522",
+                                "isActive": false
+                              },
+                              "children": [
+                                {
+                                  "data": {
+                                    "text": "分肢目Cladocopida",
+                                    "expand": true,
+                                    "uid": "826f5e16-cb2f-4efa-9561-8ef0ff78be74",
+                                    "isActive": false
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "data": {
+                                    "text": "壮肢目Myodocopida",
+                                    "expand": true,
+                                    "uid": "2c5e731b-0a00-4b45-a868-d1dc5ac39c43",
+                                    "isActive": false
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "text": "",
+                    "expand": true,
+                    "uid": "aa7207a0-bdc6-4248-9bd8-c8267b5faa0b",
+                    "isActive": false
+                  },
+                  "children": [
+                    {
+                      "data": {
+                        "text": "鱼介纲Ichthyostraca",
+                        "expand": true,
+                        "uid": "d356a3cc-8926-4d8c-800b-220e93903419",
+                        "isActive": false
+                      },
+                      "children": [
+                        {
+                          "data": {
+                            "text": "鳃尾目Branchiura",
+                            "expand": true,
+                            "uid": "17993747-5935-480a-829b-d1d5960577d5",
+                            "isActive": false
+                          },
+                          "children": []
+                        },
+                        {
+                          "data": {
+                            "text": "舌形虫目Pentastomida",
+                            "expand": true,
+                            "uid": "b921eff7-55be-43bf-8cf9-b9f4fcdede94",
+                            "isActive": false
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "text": "尾肢纲Podocopa",
+                        "expand": true,
+                        "uid": "d1ba9929-b214-4d36-80db-d4fb2e765491",
+                        "isActive": false
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "data": {
+                "text": "中甲壳类Altocrustacea",
+                "expand": true,
+                "uid": "7a04ff01-99ba-401b-8318-9c9b345d1537",
+                "isActive": false
+              },
+              "children": [
+                {
+                  "data": {
+                    "text": "常甲总纲Communostraca",
+                    "expand": true,
+                    "uid": "2e4194fc-9730-4d9d-af15-ed3960d2e666",
+                    "isActive": false
+                  },
+                  "children": [
+                    {
+                      "data": {
+                        "text": "鞘甲纲Thecostraca",
+                        "expand": true,
+                        "uid": "327909ff-ec17-4ace-ab6f-4a1f6dfcff6b",
+                        "isActive": false
+                      },
+                      "children": []
+                    },
+                    {
+                      "data": {
+                        "text": "",
+                        "expand": true,
+                        "uid": "870e7891-5d7c-4a04-adc1-d620a2a24a7d",
+                        "isActive": false
+                      },
+                      "children": [
+                        {
+                          "data": {
+                            "text": "✝旋轮蟹目Cyclida",
+                            "expand": true,
+                            "uid": "fecdd042-ffb5-49cb-bc48-c7f9a94c21c0",
+                            "isActive": false
+                          },
+                          "children": []
+                        },
+                        {
+                          "data": {
+                            "text": "",
+                            "expand": true,
+                            "uid": "93d8b145-7400-4182-b4c3-584674fe0ac4",
+                            "isActive": false
+                          },
+                          "children": [
+                            {
+                              "data": {
+                                "text": "✝袋头纲Thylacocephala",
+                                "expand": true,
+                                "uid": "cf3f4146-2025-4517-b97d-28c6dfeea41f",
+                                "isActive": false
+                              },
+                              "children": []
+                            },
+                            {
+                              "data": {
+                                "text": "软甲纲Malacostraca",
+                                "expand": true,
+                                "uid": "1718435d-2aa6-452e-8163-3f8f3ca5cc08",
+                                "isActive": false
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "text": "异甲总纲Allotriocarida",
+                    "expand": true,
+                    "uid": "76a5fbe4-ab51-4816-b5c0-1f8d585b790c",
+                    "isActive": false
+                  },
+                  "children": [
+                    {
+                      "data": {
+                        "text": "头虾纲Cephalocarida",
+                        "expand": true,
+                        "uid": "c1c24c79-1080-4ba9-8f0d-56c32d707b45",
+                        "isActive": false
+                      },
+                      "children": []
+                    },
+                    {
+                      "data": {
+                        "text": "",
+                        "expand": true,
+                        "uid": "e75d98ad-b7cb-4abd-a29d-6d1782ada0cc",
+                        "isActive": false
+                      },
+                      "children": [
+                        {
+                          "data": {
+                            "text": "",
+                            "expand": true,
+                            "uid": "3bab8033-dc0e-4002-b6e1-fd6e2621b693",
+                            "isActive": false
+                          },
+                          "children": [
+                            {
+                              "data": {
+                                "text": "桡足纲Copepoda",
+                                "expand": true,
+                                "uid": "c55aee2e-ddd7-4d0f-bf18-00970b555cd7",
+                                "isActive": false
+                              },
+                              "children": []
+                            },
+                            {
+                              "data": {
+                                "text": "鳃足纲Branchiopoda",
+                                "expand": true,
+                                "uid": "d434fe40-ae00-4d30-a622-a90397238adb",
+                                "isActive": false
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "data": {
+                            "text": "",
+                            "expand": true,
+                            "uid": "d4154d21-f9f3-45d8-88e1-a27144b16a04",
+                            "isActive": false
+                          },
+                          "children": [
+                            {
+                              "data": {
+                                "text": "伍特克埃申巴赫虾Eschenbachiellus wuttkensis",
+                                "expand": true,
+                                "uid": "ca126873-da27-4f69-a6a1-10572b3340e2",
+                                "isActive": false
+                              },
+                              "children": []
+                            },
+                            {
+                              "data": {
+                                "text": "",
+                                "expand": true,
+                                "uid": "15885757-bd70-4dd7-b0b8-7027f67ba01c",
+                                "isActive": false
+                              },
+                              "children": [
+                                {
+                                  "data": {
+                                    "text": "桨足纲Remipedia",
+                                    "expand": true,
+                                    "uid": "cbc316c4-7b17-49e8-9027-0d21cf5873eb",
+                                    "isActive": false
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "data": {
+                                    "text": "",
+                                    "expand": true,
+                                    "uid": "01baa253-574b-44eb-a065-dac7c9f67457",
+                                    "isActive": false
+                                  },
+                                  "children": [
+                                    {
+                                      "data": {
+                                        "text": "六足类Hexapoda",
+                                        "expand": true,
+                                        "uid": "de543787-3bbc-403c-8bb0-97b947ca4950",
+                                        "isActive": false
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "smmVersion": "0.13.1-fix.2"
+    },
+    "theme": {
+      "template": "default",
+      "config": {
+        "backgroundColor": "#ffffff",
+        "lineColor": "#000000",
+        "lineWidth": 2,
+        "lineStyle": "straight",
+        "lineRadius": 0,
+        "nodeUseLineStyle": true,
+        "hoverRectColor": "#4b5563",
+        "root": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "marginX": 90,
+          "marginY": 28,
+          "paddingX": 20,
+          "paddingY": 10
+        },
+        "second": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 17,
+          "fontWeight": "bold",
+          "marginX": 86,
+          "marginY": 22,
+          "paddingX": 14,
+          "paddingY": 7
+        },
+        "node": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 15,
+          "marginX": 62,
+          "marginY": 12,
+          "paddingX": 12,
+          "paddingY": 6
+        }
+      }
+    },
+    "view": {
+      "transform": {
+        "scaleX": 0.7119999999999997,
+        "scaleY": 0.7119999999999997,
+        "shear": 0,
+        "rotate": 0,
+        "translateX": -698.2773188476563,
+        "translateY": 106.92800000000011,
+        "originX": 0,
+        "originY": 0,
+        "a": 0.7119999999999997,
+        "b": 0,
+        "c": 0,
+        "d": 0.7119999999999997,
+        "e": -698.2773188476563,
+        "f": 106.92800000000011
+      },
+      "state": {
+        "scale": 0.7119999999999997,
+        "x": -698.2773188476563,
+        "y": 106.92800000000011,
+        "sx": -80,
+        "sy": -25
+      }
+    },
+    "evolution": {
+      "nodeLineStyle": true,
+      "hideInternalNames": false,
+      "alignLeavesRight": false
+    }
+  }
+}

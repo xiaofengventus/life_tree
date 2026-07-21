@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "trees:index": "node scripts/generate-tree-index.mjs",
+    "predev": "npm run trees:index",
     "dev": "vite",
+    "prebuild": "npm run trees:index",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "run-s \"lint:*\"",

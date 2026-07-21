@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import navBar from "@/components/navBar.vue";
 import evolution_mind_map from "@/components/evolution_mind_map.vue";
 import {
@@ -10,11 +10,72 @@ import {
 const document = ref(createInitialMindMapDocument());
 const loading = ref(true);
 const errorMessage = ref("");
+const treeOptions = ref([]);
+const selectedTreeUrl = ref("");
+const treeBaseUrl = `${import.meta.env.BASE_URL}trees/`;
+const selectedTree = computed(() =>
+  treeOptions.value.find((tree) => tree.url === selectedTreeUrl.value),
+);
 
-// communication-tree.json
-async function loadOfficialTree() {
+function normalizeCatalogEntry(entry, index) {
+  const file = typeof entry === "string" ? entry : entry?.file;
+  if (!file) return null;
   try {
-    const response = await fetch("/trees/LUCA.xur", {
+    const base = new URL(treeBaseUrl, window.location.origin);
+    const url = new URL(file, base);
+    if (
+      url.origin !== base.origin ||
+      !url.pathname.startsWith(base.pathname) ||
+      !url.pathname.toLowerCase().endsWith(".xur")
+    )
+      return null;
+    return {
+      id: typeof entry === "object" && entry.id ? entry.id : `tree-${index}`,
+      name:
+        (typeof entry === "object" && entry.name) ||
+        decodeURIComponent(
+          url.pathname
+            .split("/")
+            .pop()
+            .replace(/\.xur$/i, ""),
+        ),
+      url: url.href,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function loadTreeCatalog() {
+  try {
+    const response = await fetch(`${treeBaseUrl}index.json`, {
+      cache: "no-cache",
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const entries = Array.isArray(payload) ? payload : payload.trees;
+    treeOptions.value = (Array.isArray(entries) ? entries : [])
+      .map(normalizeCatalogEntry)
+      .filter(Boolean);
+  } catch (error) {
+    console.error("进化树目录加载失败，将使用默认树", error);
+  }
+
+  if (!treeOptions.value.length) {
+    treeOptions.value = [
+      normalizeCatalogEntry({ name: "LUCA 生命之树", file: "LUCA.xur" }, 0),
+    ];
+  }
+  selectedTreeUrl.value = treeOptions.value[0].url;
+  await loadSelectedTree();
+}
+
+async function loadSelectedTree() {
+  if (!selectedTreeUrl.value) return;
+  loading.value = true;
+  errorMessage.value = "";
+  try {
+    const response = await fetch(selectedTreeUrl.value, {
       cache: "no-cache",
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -27,7 +88,7 @@ async function loadOfficialTree() {
   }
 }
 
-onMounted(loadOfficialTree);
+onMounted(loadTreeCatalog);
 </script>
 
 <template>
@@ -38,7 +99,25 @@ onMounted(loadOfficialTree);
         <span>OFFICIAL LIFE TREE</span>
         <h1>生命时序官方进化树</h1>
       </div>
-      <p>拖动画布浏览，使用 Ctrl + 滚轮缩放，点击节点链接查看资料。</p>
+      <div class="heading-actions">
+        <p>拖动画布浏览，使用 Ctrl + 滚轮缩放，点击节点文字查看资料。</p>
+        <label class="tree-picker">
+          <span>选择进化树</span>
+          <select
+            v-model="selectedTreeUrl"
+            :disabled="loading || treeOptions.length < 2"
+            @change="loadSelectedTree"
+          >
+            <option
+              v-for="tree in treeOptions"
+              :key="tree.id"
+              :value="tree.url"
+            >
+              {{ tree.name }}
+            </option>
+          </select>
+        </label>
+      </div>
     </header>
 
     <section class="communication-tree-card">
@@ -53,7 +132,7 @@ onMounted(loadOfficialTree);
         v-else
         v-model="document"
         read-only
-        file-owner="生命时序官方树"
+        :file-owner="selectedTree?.name || '生命时序官方树'"
       />
     </section>
   </main>
@@ -94,10 +173,41 @@ onMounted(loadOfficialTree);
   font-size: clamp(22px, 3vw, 34px);
 }
 
-.page-heading p {
-  margin: 0 0 4px 24px;
+.heading-actions {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  margin-left: 24px;
+}
+
+.heading-actions p {
+  margin: 0 0 8px;
   color: #6c7d72;
   font-size: 13px;
+}
+
+.tree-picker {
+  display: grid;
+  gap: 4px;
+  color: #65806e;
+  font-size: 11px;
+}
+
+.tree-picker select {
+  min-width: 210px;
+  min-height: 36px;
+  padding: 6px 32px 6px 10px;
+  border: 1px solid #c7d5cb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #294236;
+  font: inherit;
+  font-size: 13px;
+}
+
+.tree-picker select:disabled {
+  cursor: default;
+  opacity: 0.72;
 }
 
 .communication-tree-card {
@@ -149,8 +259,21 @@ onMounted(loadOfficialTree);
     padding: 0 8px;
   }
 
-  .page-heading p {
+  .heading-actions p {
     display: none;
+  }
+
+  .heading-actions {
+    margin-left: 12px;
+  }
+
+  .tree-picker span {
+    display: none;
+  }
+
+  .tree-picker select {
+    min-width: 150px;
+    max-width: 48vw;
   }
 
   .communication-tree-card {

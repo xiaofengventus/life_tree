@@ -1,0 +1,269 @@
+{
+  "format": "life-tree.xur",
+  "version": 3,
+  "engine": "simple-mind-map",
+  "exportedAt": "2026-07-21T09:48:31.926Z",
+  "document": {
+    "layout": "logicalStructure",
+    "root": {
+      "data": {
+        "uid": "life-node-mrugyl6p-7fd5s9h",
+        "text": "生命共同祖先",
+        "expand": true,
+        "hyperlink": "",
+        "hyperlinkTitle": "",
+        "image": "",
+        "imageTitle": "",
+        "fillColor": "#ffffff",
+        "color": "#000000",
+        "borderColor": "#ffffff",
+        "borderWidth": 0,
+        "fontSize": 20,
+        "fontWeight": "bold",
+        "shape": "roundedRectangle",
+        "isActive": false
+      },
+      "children": [
+        {
+          "data": {
+            "text": "鹈形目 Pelecaniformes",
+            "expand": true,
+            "richText": false,
+            "isActive": false,
+            "uid": "640f6cbd-e3da-41d7-b61b-c3b7d5647b69"
+          },
+          "children": [
+            {
+              "data": {
+                "text": "鹈鹕科 Pelecanidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "a7b9a80a-bf84-4b01-aba8-0ef7ba266e9a"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鲣鸟科 Sulidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "441dba23-5770-46cb-ad40-6e1db43c0263"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鸬鹚科 Phalacrocoracidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "787008b4-ab15-4745-a587-174a94a79ece"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "军舰鸟科 Fregatidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "54144107-2582-481b-9345-95410ed47ac0"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "蛇鹈科 Anhingidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "b9c03e9e-01a7-4994-8723-8be82f206bde"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鹲科 Phaethontidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "b04e2e6a-6569-4cfa-9581-e8bee7b0dc89"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "text": "鹳形目 Ciconiiformes",
+            "expand": true,
+            "richText": false,
+            "isActive": false,
+            "uid": "d538bfb0-7357-4772-86cc-aa31dd3de8b2"
+          },
+          "children": [
+            {
+              "data": {
+                "text": "鹭科 Ardeidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "12b7c349-9dc6-432a-a769-550114027623"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "宽嘴鹭科 Cochlearidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "d7c145e1-9a84-460a-ad26-34ac9664051a"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鲸头鹳科 Balaenicipitidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "96833f83-0971-4298-a3a8-0e0175105f7e"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "锤头鹳科 Scopidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "d5c74bb5-063d-4608-b13e-2ec8714f6de5"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鹳科 Ciconiidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "affdc320-d03c-4d4f-a268-d435c3e71329"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "鹮科 Threskiornithidae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "d8a4c7d3-6e5e-40cc-a231-7498c11ca373"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "红鹳科 Phoenicopteridae",
+                "expand": true,
+                "richText": false,
+                "isActive": false,
+                "uid": "28c82653-441e-4d88-813a-acdb2f063b78"
+              },
+              "children": []
+            }
+          ]
+        }
+      ],
+      "smmVersion": "0.13.1-fix.2"
+    },
+    "theme": {
+      "template": "default",
+      "config": {
+        "backgroundColor": "#ffffff",
+        "lineColor": "#000000",
+        "lineWidth": 2,
+        "lineStyle": "straight",
+        "lineRadius": 0,
+        "nodeUseLineStyle": true,
+        "hoverRectColor": "#4b5563",
+        "root": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "marginX": 90,
+          "marginY": 28,
+          "paddingX": 20,
+          "paddingY": 10
+        },
+        "second": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 17,
+          "fontWeight": "bold",
+          "marginX": 86,
+          "marginY": 22,
+          "paddingX": 14,
+          "paddingY": 7
+        },
+        "node": {
+          "shape": "rectangle",
+          "fillColor": "#ffffff",
+          "color": "#000000",
+          "borderColor": "#ffffff",
+          "borderWidth": 0,
+          "borderRadius": 0,
+          "fontFamily": "\"Noto Sans SC\", \"Microsoft YaHei\", sans-serif",
+          "fontSize": 15,
+          "marginX": 62,
+          "marginY": 12,
+          "paddingX": 12,
+          "paddingY": 6
+        }
+      }
+    },
+    "view": {
+      "transform": {
+        "scaleX": 0.7359999999999999,
+        "scaleY": 0.7359999999999999,
+        "shear": 0,
+        "rotate": 0,
+        "translateX": -20.45599999999986,
+        "translateY": 33.33600000000001,
+        "originX": 0,
+        "originY": 0,
+        "a": 0.7359999999999999,
+        "b": 0,
+        "c": 0,
+        "d": 0.7359999999999999,
+        "e": -20.45599999999986,
+        "f": 33.33600000000001
+      },
+      "state": {
+        "scale": 0.7359999999999999,
+        "x": -20.45599999999986,
+        "y": 33.33600000000001,
+        "sx": 37.54400000000014,
+        "sy": 52.33600000000001
+      }
+    },
+    "evolution": {
+      "nodeLineStyle": true,
+      "hideInternalNames": false,
+      "alignLeavesRight": false
+    }
+  }
+}
