@@ -1,124 +1,277 @@
 {
-  "version": 1,
-  "layout_mode": "rectangular",
-  "align_right": false,
-  "hide_internal_names": false,
-  "node_spacing": 48,
-  "auto_branch_length": true,
-  "label_wrap_lines": 2,
-  "label_position_mode": "above",
-  "root": {
-    "name": "生命时序共创树",
-    "branch_length": 0,
-    "branch_color": "#6AA84F",
-    "text_color": "#111827",
-    "url": "https://zh.wikipedia.org/wiki/%E7%94%9F%E5%91%BD%E6%A0%91",
-    "label_width": null,
-    "clade_color": null,
-    "hide_children": false,
-    "children": [
-      {
-        "name": "动物界 Animalia",
-        "branch_length": 130,
-        "branch_color": "#4A90E2",
-        "text_color": "#0F172A",
-        "url": "https://zh.wikipedia.org/wiki/%E5%8A%A8%E7%89%A9",
-        "label_width": null,
-        "clade_color": null,
-        "hide_children": false,
-        "children": [
-          {
-            "name": "脊索动物门 Chordata",
-            "branch_length": 150,
-            "branch_color": "#4A90E2",
-            "text_color": "#0F172A",
-            "url": "https://zh.wikipedia.org/wiki/%E8%84%8A%E7%B4%A2%E5%8A%A8%E7%89%A9%E9%97%A8",
-            "label_width": null,
-            "clade_color": null,
-            "hide_children": false,
-            "children": [
-              {
-                "name": "哺乳纲 Mammalia",
-                "branch_length": 140,
-                "branch_color": "#4A90E2",
-                "text_color": "#0F172A",
-                "url": "https://zh.wikipedia.org/wiki/%E5%93%BA%E4%B9%B3%E5%8A%A8%E7%89%A9",
-                "label_width": null,
-                "clade_color": null,
-                "hide_children": false,
-                "children": []
+  "format": "life-tree.xur",
+  "version": 3,
+  "engine": "simple-mind-map",
+  "document": {
+    "layout": "logicalStructure",
+    "root": {
+      "data": {
+        "uid": "official-luca",
+        "text": "生命共同祖先\nLast Universal Common Ancestor",
+        "expand": true,
+        "hyperlink": "https://zh.wikipedia.org/wiki/%E6%9C%80%E5%90%8E%E6%99%AE%E9%81%8D%E5%85%B1%E5%90%8C%E7%A5%96%E5%85%88",
+        "fillColor": "#163d2b",
+        "color": "#ffffff",
+        "borderColor": "#163d2b",
+        "borderWidth": 2,
+        "fontSize": 20,
+        "fontWeight": "bold",
+        "shape": "roundedRectangle"
+      },
+      "children": [
+        {
+          "data": {
+            "uid": "official-bacteria",
+            "text": "细菌域 Bacteria",
+            "expand": true,
+            "hyperlink": "https://zh.wikipedia.org/wiki/%E7%BB%86%E8%8F%8C",
+            "fillColor": "#e8f1ff",
+            "borderColor": "#5b8fd4",
+            "lineColor": "#5b8fd4",
+            "color": "#193a63"
+          },
+          "children": [
+            {
+              "data": {
+                "uid": "official-cyanobacteria",
+                "text": "蓝细菌门 Cyanobacteria",
+                "expand": true,
+                "hyperlink": "https://zh.wikipedia.org/wiki/%E8%97%8D%E8%97%BB%E9%96%80",
+                "lineColor": "#5b8fd4"
               },
-              {
-                "name": "鸟纲 Aves",
-                "branch_length": 140,
-                "branch_color": "#4A90E2",
-                "text_color": "#0F172A",
-                "url": "https://zh.wikipedia.org/wiki/%E9%B8%9F",
-                "label_width": null,
-                "clade_color": null,
-                "hide_children": false,
-                "children": []
-              }
-            ]
+              "children": []
+            },
+            {
+              "data": {
+                "uid": "official-proteobacteria",
+                "text": "变形菌门 Proteobacteria",
+                "expand": true,
+                "hyperlink": "https://zh.wikipedia.org/wiki/%E8%AE%8A%E5%BD%A2%E8%8F%8C%E9%96%80",
+                "lineColor": "#5b8fd4"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "uid": "official-firmicutes",
+                "text": "厚壁菌门 Bacillota",
+                "expand": true,
+                "lineColor": "#5b8fd4"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "uid": "official-actinomycetota",
+                "text": "放线菌门 Actinomycetota",
+                "expand": true,
+                "lineColor": "#5b8fd4"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "uid": "official-archaea",
+            "text": "古菌域 Archaea",
+            "expand": true,
+            "hyperlink": "https://zh.wikipedia.org/wiki/%E5%8F%A4%E8%8F%8C",
+            "fillColor": "#f3eaff",
+            "borderColor": "#9670c5",
+            "lineColor": "#9670c5",
+            "color": "#4e2c72"
           },
-          {
-            "name": "节肢动物门 Arthropoda",
-            "branch_length": 150,
-            "branch_color": "#4A90E2",
-            "text_color": "#0F172A",
-            "url": "https://zh.wikipedia.org/wiki/%E8%8A%82%E8%82%A2%E5%8A%A8%E7%89%A9%E9%97%A8",
-            "label_width": null,
-            "clade_color": null,
-            "hide_children": false,
-            "children": []
-          }
-        ]
-      },
-      {
-        "name": "植物界 Plantae",
-        "branch_length": 130,
-        "branch_color": "#2F855A",
-        "text_color": "#0F172A",
-        "url": "https://zh.wikipedia.org/wiki/%E6%A4%8D%E7%89%A9",
-        "label_width": null,
-        "clade_color": null,
-        "hide_children": false,
-        "children": [
-          {
-            "name": "被子植物 Angiosperms",
-            "branch_length": 150,
-            "branch_color": "#2F855A",
-            "text_color": "#0F172A",
-            "url": "https://zh.wikipedia.org/wiki/%E8%A2%AB%E5%AD%90%E6%A4%8D%E7%89%A9",
-            "label_width": null,
-            "clade_color": null,
-            "hide_children": false,
-            "children": []
+          "children": [
+            {
+              "data": {
+                "uid": "official-euryarchaeota",
+                "text": "广古菌门 Euryarchaeota",
+                "expand": true,
+                "lineColor": "#9670c5"
+              },
+              "children": [
+                {
+                  "data": {
+                    "uid": "official-methanogens",
+                    "text": "产甲烷菌 Methanogens",
+                    "expand": true,
+                    "lineColor": "#9670c5"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "uid": "official-halophiles",
+                    "text": "嗜盐古菌 Halophiles",
+                    "expand": true,
+                    "lineColor": "#9670c5"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "uid": "official-tack",
+                "text": "TACK 超门 TACK superphylum",
+                "expand": true,
+                "lineColor": "#9670c5"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "uid": "official-eukaryota",
+            "text": "真核域 Eukaryota",
+            "expand": true,
+            "hyperlink": "https://zh.wikipedia.org/wiki/%E7%9C%9F%E6%A0%B8%E7%94%9F%E7%89%A9",
+            "fillColor": "#e8f5ec",
+            "borderColor": "#4e9a68",
+            "lineColor": "#4e9a68",
+            "color": "#174a2b"
           },
-          {
-            "name": "裸子植物 Gymnosperms",
-            "branch_length": 150,
-            "branch_color": "#2F855A",
-            "text_color": "#0F172A",
-            "url": "https://zh.wikipedia.org/wiki/%E8%A3%B8%E5%AD%90%E6%A4%8D%E7%89%A9",
-            "label_width": null,
-            "clade_color": null,
-            "hide_children": false,
-            "children": []
-          }
-        ]
-      },
-      {
-        "name": "真菌界 Fungi",
-        "branch_length": 130,
-        "branch_color": "#9B6B43",
-        "text_color": "#0F172A",
-        "url": "https://zh.wikipedia.org/wiki/%E7%9C%9F%E8%8F%8C",
-        "label_width": null,
-        "clade_color": null,
-        "hide_children": false,
-        "children": []
+          "children": [
+            {
+              "data": {
+                "uid": "official-animalia",
+                "text": "动物界 Animalia",
+                "expand": true,
+                "hyperlink": "https://zh.wikipedia.org/wiki/%E5%8A%A8%E7%89%A9",
+                "fillColor": "#fff1e8",
+                "borderColor": "#d98a55",
+                "lineColor": "#d98a55"
+              },
+              "children": [
+                {
+                  "data": {
+                    "uid": "official-chordata",
+                    "text": "脊索动物门 Chordata",
+                    "expand": true,
+                    "lineColor": "#d98a55"
+                  },
+                  "children": [
+                    {
+                      "data": {
+                        "uid": "official-mammalia",
+                        "text": "哺乳纲 Mammalia",
+                        "expand": true,
+                        "lineColor": "#d98a55"
+                      },
+                      "children": []
+                    },
+                    {
+                      "data": {
+                        "uid": "official-aves",
+                        "text": "鸟纲 Aves",
+                        "expand": true,
+                        "lineColor": "#d98a55"
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "uid": "official-arthropoda",
+                    "text": "节肢动物门 Arthropoda",
+                    "expand": true,
+                    "lineColor": "#d98a55"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "uid": "official-plantae",
+                "text": "植物界 Plantae",
+                "expand": true,
+                "hyperlink": "https://zh.wikipedia.org/wiki/%E6%A4%8D%E7%89%A9",
+                "fillColor": "#edf7df",
+                "borderColor": "#79a84d",
+                "lineColor": "#79a84d"
+              },
+              "children": [
+                {
+                  "data": {
+                    "uid": "official-angiosperms",
+                    "text": "被子植物 Angiosperms",
+                    "expand": true,
+                    "lineColor": "#79a84d"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "uid": "official-gymnosperms",
+                    "text": "裸子植物 Gymnosperms",
+                    "expand": true,
+                    "lineColor": "#79a84d"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "uid": "official-fungi",
+                "text": "真菌界 Fungi",
+                "expand": true,
+                "hyperlink": "https://zh.wikipedia.org/wiki/%E7%9C%9F%E8%8F%8C",
+                "fillColor": "#f7eddf",
+                "borderColor": "#a77b4f",
+                "lineColor": "#a77b4f"
+              },
+              "children": [
+                {
+                  "data": {
+                    "uid": "official-ascomycota",
+                    "text": "子囊菌门 Ascomycota",
+                    "expand": true,
+                    "lineColor": "#a77b4f"
+                  },
+                  "children": []
+                },
+                {
+                  "data": {
+                    "uid": "official-basidiomycota",
+                    "text": "担子菌门 Basidiomycota",
+                    "expand": true,
+                    "lineColor": "#a77b4f"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "data": {
+                "uid": "official-protists",
+                "text": "原生生物类群 Protists",
+                "expand": true,
+                "fillColor": "#e7f5f4",
+                "borderColor": "#4b9a95",
+                "lineColor": "#4b9a95"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "theme": {
+      "template": "default",
+      "config": {
+        "backgroundColor": "#f8faf7",
+        "lineColor": "#71877a",
+        "lineWidth": 2,
+        "lineStyle": "straight",
+        "lineRadius": 8,
+        "hoverRectColor": "#256f4b"
       }
-    ]
+    },
+    "view": null
   }
 }
